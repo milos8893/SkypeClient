@@ -55,15 +55,17 @@ namespace Skype.Client.Demo
             }
             else
             {
-                Console.WriteLine("Parameters mismatch");
                 Console.WriteLine("NO COMMAND LINE!");
 
-                Console.WriteLine("Starting authentication. This might take a few seconds.");
-                Console.WriteLine("Enter the Skype password:");
+                Console.WriteLine("Enter the Skype username:");
+                string user = Console.ReadLine();
 
+                Console.WriteLine("Enter the Skype password:");
                 string pass = Console.ReadLine();
 
-                client.Login("appbre@gmail.com", pass);
+                Console.WriteLine("Starting authentication. This might take a few seconds.");
+
+                client.Login(user, pass);
 
                 Console.ReadKey();
             }
@@ -84,7 +86,7 @@ namespace Skype.Client.Demo
                 // Use client.Login(args[0], args[1]); (see the line ~63 above), to login the skype using the data the user provided in a gui
                 // Set the login as success somewhere around the line 110 below.
                 // if (eventArgs.New == AppStatus.Ready) means we are logged in!
-                // Once logged in, the gui should be able to add new filters.
+                // 
                 // When he does that, he could choose the filter name, filter trigger text and the group chat where the messages are to be forwarded
                 // The user will be able to choose from a dropdown list of groups/contacts.
                 // The <list> of the contacts is located at SkypeClient.Contacts, located in Skype.Client.cs
