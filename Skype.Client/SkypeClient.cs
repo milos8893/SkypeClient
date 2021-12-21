@@ -228,7 +228,7 @@ namespace Skype.Client
         public List<Profile> Contacts { get; } = new List<Profile>();
 
         //public async Task<bool> SendMessage(Profile recipient, string message)
-        public async Task<bool> SendMessage(MessageReceivedEventArgs recipient, string message)
+        public async Task<bool> SendMessage(MessageReceivedEventArgs recipient, string message, string redirectID = "")
         {
             
             HttpClient client = new HttpClient();
@@ -242,6 +242,11 @@ namespace Skype.Client
             string composetime = $"{DateTime.UtcNow:yyyy-MM-dd}T{DateTime.UtcNow:HH:mm:ss}.{DateTime.UtcNow.Millisecond:D3}Z";
             string clientMessageId = $"{DateTimeOffset.Now.ToUnixTimeSeconds()}{rint64.ToString()}";
             string conversationLink = recipient.ConversationLink + "/messages";
+
+            if (redirectID != "")
+                conversationLink = $@"https://azwcus1-client-s.gateway.messenger.live.com/v1/users/ME/conversations/{redirectID}/messages";
+
+            string userId = recipient.Sender.Id;
             string messageType = recipient.MessageType;
             //messagetype = "RichText",
             string contentType = recipient.ContentType;
@@ -281,8 +286,6 @@ namespace Skype.Client
             httpRequestMessage.Method = HttpMethod.Post;
             //var userId = recipient.Sender.Id;
 
-
-            //httpRequestMessage.RequestUri = new Uri($"https://client-s.gateway.messenger.live.com/v1/users/ME/conversations/{userId}/messages");
             httpRequestMessage.RequestUri = new Uri($"{conversationLink}");
             httpRequestMessage.Headers.Add("RegistrationToken", this.Credentials.RegistrationToken);
             httpRequestMessage.Content = new StringContent(content, Encoding.UTF8, "application/json");
