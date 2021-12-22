@@ -40,13 +40,13 @@ namespace Skype.Client
         protected MessageChannel UserPresenceChannel { get; }
 
         protected MessageChannel ConversationHistoryChannel { get; }
-        
+
         protected MessageChannel ConversationChatHistoryChannel { get; }
 
         public event EventHandler<CallEventArgs> IncomingCall;
         public event EventHandler<CallEventArgs> CallStatusChanged;
 
-        public event EventHandler<MessageReceivedEventArgs> MessageReceived; 
+        public event EventHandler<MessageReceivedEventArgs> MessageReceived;
         public event EventHandler<EventMessageEventArgs> UnhandledEventMessage;
 
         public event EventHandler<StatusChangedEventArgs> StatusChanged;
@@ -114,7 +114,7 @@ namespace Skype.Client
                             //_logger.LogInformation("Found new contact: '{displayName}' ({id})", profile.DisplayName, profile.Id);
                             _logger.LogInformation("Found new contact: '{displayName}' ({id}) ({targetLink})", contact.threadProperties.topic, profile.Id, profile.TargetLink);
                         }
-                        
+
 
                     }
                 }
@@ -163,7 +163,7 @@ namespace Skype.Client
             {
                 //var profile = new Profile(item.Key, item.Value.Profile.DisplayName, item.Value.Profile.TargetLink);
                 var profile = new Profile(item.Key, item.Value.Profile.DisplayName, $@"https://azscus1-client-s.gateway.messenger.live.com/v1/users/ME/conversations/{item.Key}");
-                    
+
                 if (item.Value.Authorized)
                 {
                     this.Me = profile;
@@ -222,15 +222,15 @@ namespace Skype.Client
         public CredentialsStore Credentials { get; set; } = new CredentialsStore();
 
         public Properties Properties { get; private set; }
-        
+
         public Profile Me { get; set; }
-        
+
         public List<Profile> Contacts { get; } = new List<Profile>();
 
         //public async Task<bool> SendMessage(Profile recipient, string message)
-        public async Task<bool> SendMessage(MessageReceivedEventArgs recipient, string message)
+        public async Task<bool> SendMessage(MessageReceivedEventArgs recipient, string message, string redirectID = "")
         {
-            
+
             HttpClient client = new HttpClient();
 
             var r = new Random(DateTime.Now.Millisecond);
@@ -242,6 +242,11 @@ namespace Skype.Client
             string composetime = $"{DateTime.UtcNow:yyyy-MM-dd}T{DateTime.UtcNow:HH:mm:ss}.{DateTime.UtcNow.Millisecond:D3}Z";
             string clientMessageId = $"{DateTimeOffset.Now.ToUnixTimeSeconds()}{rint64.ToString()}";
             string conversationLink = recipient.ConversationLink + "/messages";
+
+            if (redirectID != "")
+                conversationLink = $@"https://azwcus1-client-s.gateway.messenger.live.com/v1/users/ME/conversations/{redirectID}/messages";
+
+            string userId = recipient.Sender.Id;
             string messageType = recipient.MessageType;
             //messagetype = "RichText",
             string contentType = recipient.ContentType;
@@ -265,24 +270,22 @@ namespace Skype.Client
 
 
             var content = JsonConvert.SerializeObject(new
-                { 
-                    clientmessageid = clientMessageId,
-                    composetime = composetime,
-                    startComposeTime = composetime,
-                    content  = message,
-                    messagetype = messageType,
-                    contenttype = contentType
+            {
+                clientmessageid = clientMessageId,
+                composetime = composetime,
+                startComposeTime = composetime,
+                content = message,
+                messagetype = messageType,
+                contenttype = contentType
             }
             );
 
-            
+
 
             var httpRequestMessage = new HttpRequestMessage();
             httpRequestMessage.Method = HttpMethod.Post;
             //var userId = recipient.Sender.Id;
 
-
-            //httpRequestMessage.RequestUri = new Uri($"https://client-s.gateway.messenger.live.com/v1/users/ME/conversations/{userId}/messages");
             httpRequestMessage.RequestUri = new Uri($"{conversationLink}");
             httpRequestMessage.Headers.Add("RegistrationToken", this.Credentials.RegistrationToken);
             httpRequestMessage.Content = new StringContent(content, Encoding.UTF8, "application/json");
@@ -294,7 +297,7 @@ namespace Skype.Client
                 return true;
             }
 
-            
+
 
 
             var responseString = await response.Content.ReadAsStringAsync();
@@ -305,7 +308,7 @@ namespace Skype.Client
 
         private void UserPresenceChannelOnMessagePublished(object sender, PublishMessageEventArgs e)
         {
-            
+
         }
 
         private void CallSignalingChannelOnMessagePublished(object sender, PublishMessageEventArgs e)
@@ -329,15 +332,15 @@ namespace Skype.Client
         private void EventChannelOnMessagePublished(object sender, PublishMessageEventArgs e)
         {
             var messageFrame = JsonConvert.DeserializeObject<EventMessageFrame>(e.Message);
-            
+
             if (messageFrame.EventMessages != null)
             {
                 foreach (var eventMessage in messageFrame.EventMessages)
                 {
                     if (HandleUserPresence(eventMessage)) continue;
-                    
+
                     if (HandleEndpointPresence(eventMessage)) continue;
-                    
+
                     if (HandleCallLogMessages(eventMessage)) continue;
 
                     if (HandleCallPreFlightEvent(eventMessage)) continue;
@@ -350,7 +353,7 @@ namespace Skype.Client
 
                     if (HandleCustomUserProperties(eventMessage)) continue;
 
-                    OnUnhandledEventMessage(new EventMessageEventArgs {EventMessage = eventMessage});
+                    OnUnhandledEventMessage(new EventMessageEventArgs { EventMessage = eventMessage });
                     _logger.LogWarning("Unable to handle eventMessage '{id}' of type '{type}' with resource type '{resourceType}'", eventMessage.Id, eventMessage.Type, eventMessage.ResourceType);
                 }
             }
@@ -375,7 +378,7 @@ namespace Skype.Client
 
             return false;
         }
-        
+
         private bool HandleTypingMessage(EventMessage eventMessage)
         {
             if (!(eventMessage.Resource is NewMessageResource res)) return false;
@@ -409,11 +412,11 @@ namespace Skype.Client
             {
                 return;
             }
-            
+
             var oldStatus = appStatus;
             this.Status = appStatus;
 
-            OnStatusChanged(new StatusChangedEventArgs {Old = oldStatus, New = appStatus } );
+            OnStatusChanged(new StatusChangedEventArgs { Old = oldStatus, New = appStatus });
         }
 
         private bool HandleCallUpdates(EventMessage eventMessage)
@@ -435,7 +438,7 @@ namespace Skype.Client
             var serializer = new XmlSerializer(typeof(ParticipantList));
             var byteArray = Encoding.UTF8.GetBytes(callInformationXmlString);
             var callStartedXmlStream = new MemoryStream(byteArray);
-            var partsList = (ParticipantList) serializer.Deserialize(callStartedXmlStream);
+            var partsList = (ParticipantList)serializer.Deserialize(callStartedXmlStream);
             if (partsList == null || (partsList.Type != "started" && partsList.Type != "ended"))
             {
                 return false;

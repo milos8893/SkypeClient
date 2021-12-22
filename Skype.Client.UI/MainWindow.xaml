@@ -1,0 +1,18 @@
+﻿<mah:MetroWindow x:Class="Skype.Client.UI.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Skype.Client.UI"
+        xmlns:notifications="clr-namespace:Notifications.Wpf.Core.Controls;assembly=Notifications.Wpf.Core"
+        mc:Ignorable="d"
+        Title="Skype" Height="700" Width="1000">
+    <Grid>
+        <Frame Name="MainFrame" Source="/Views/LoginPage.xaml" 
+               NavigationUIVisibility="Hidden"/>
+        <notifications:NotificationArea x:Name="notificationArea"
+                                        Position="BottomRight"
+                                        MaxItems="2" />
+    </Grid>
+</mah:MetroWindow>

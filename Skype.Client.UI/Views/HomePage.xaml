@@ -1,0 +1,243 @@
+﻿<Page x:Class="Skype.Client.UI.Views.HomePage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:Skype.Client.UI.Views"
+      xmlns:viewModels="clr-namespace:Skype.Client.UI.ViewModels"
+      xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="HomePage">
+    <Page.Resources>
+        <viewModels:MainViewModel x:Key="viewModel"/>
+        <Style TargetType="ListView" x:Key="ListViewWithoutSelection">
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="ItemContainerStyle">
+                <Setter.Value>
+                    <Style TargetType="{x:Type ListViewItem}">
+                        <Setter Property="Background" Value="Transparent" />
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="{x:Type ListViewItem}">
+                                    <ContentPresenter />
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style TargetType="{x:Type DataGridCell}" x:Key="DataGridCellStyle">
+            <Style.Triggers>
+                <Trigger Property="DataGridCell.IsSelected" Value="True">
+                    <Setter Property="BorderBrush" Value="Transparent"/>
+                    <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
+                    <Setter Property="Background" Value="Transparent"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <DataTemplate x:Key="EditingDateTemplate">
+            <DatePicker SelectedDate="{Binding PublishDate}"  />
+        </DataTemplate>
+    </Page.Resources>
+    <Page.DataContext>
+        <Binding Source="{StaticResource viewModel}"/>
+    </Page.DataContext>
+
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="2*"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <DataGrid ItemsSource="{Binding Filters}"
+                  GridLinesVisibility="All"
+                  AutoGenerateColumns="False"
+                  FontSize="{StaticResource BigFontSize}"
+                  CanUserAddRows="False"
+                  CanUserDeleteRows="False"
+                  IsReadOnly="True" Grid.Row="1"
+                  HorizontalAlignment="Left">
+            <DataGrid.RowStyle>
+                <Style TargetType="DataGridRow">
+                    <Setter Property="Selector.IsSelected" Value="False"/>
+                </Style>
+            </DataGrid.RowStyle>
+
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Name" Binding="{Binding Name}"
+                                    Foreground="Black"/>
+                <DataGridTextColumn Header="Trigger" Binding="{Binding Trigger}"
+                                    Foreground="Black"/>
+                <DataGridTemplateColumn Header="Source Chats">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <ListView ItemsSource="{Binding SourceChats}"
+                                      Style="{StaticResource ListViewWithoutSelection}">
+                                <ListView.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding DisplayName}"/>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                            </ListView>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="Destination Chats">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <ListView ItemsSource="{Binding DestinationChats}"
+                                      Style="{StaticResource ListViewWithoutSelection}">
+                                <ListView.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding DisplayName}"/>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                            </ListView>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="Actions" >
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <StackPanel Margin="{StaticResource ControlMargin}">
+                                <Button Margin="{StaticResource ControlMargin}"
+                                        Command="{Binding DataContext.EditFilterCommand,RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                        CommandParameter="{Binding}">
+                                    <iconPacks:PackIconModern  Kind="Edit" VerticalAlignment="Center" Margin="{StaticResource ControlMargin}" />
+                                </Button>
+                                <Button Margin="{StaticResource ControlMargin}"
+                                        Command="{Binding DataContext.RemoveCommand,RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                        CommandParameter="{Binding}"
+                                        Background="{DynamicResource MahApps.Brushes.Control.Validation}">
+                                    <iconPacks:PackIconModern  Kind="Delete" VerticalAlignment="Center" Margin="{StaticResource ControlMargin}" />
+                                </Button>
+                            </StackPanel>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <WrapPanel Margin="{StaticResource ControlMargin}"
+                   HorizontalAlignment="Left">
+            <TextBlock FontSize="{StaticResource BigFontSize}"
+                       VerticalAlignment="Center">Filter Name</TextBlock>
+            <TextBox MinWidth="100" Text="{Binding NewFilterName,UpdateSourceTrigger=PropertyChanged}"
+                     Margin="{StaticResource ControlMargin}"
+                     FontSize="{StaticResource BigFontSize}"></TextBox>
+            <WrapPanel HorizontalAlignment="Right">
+                <Button Margin="{StaticResource ControlMargin}"
+                    FontSize="{StaticResource BigFontSize}"
+                    Command="{Binding AddFilterCommand}">Add</Button>
+            </WrapPanel>
+
+        </WrapPanel>
+
+        <TextBox AcceptsReturn="True" Grid.ColumnSpan="3"
+                 Grid.Row="2" Background="Black"
+                 Margin="10" Foreground="White"
+                 Text="{Binding Log}" />
+
+        <ScrollViewer Grid.Column="1"
+              Grid.RowSpan="2" >
+            <Grid 
+              Margin="{StaticResource ControlMargin}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <StackPanel>
+                    <TextBlock FontSize="{StaticResource BigFontSize}"
+                           Margin="{StaticResource ControlMargin}">
+                    Name
+                    </TextBlock>
+                    <!--Save automatically-->
+                    <TextBox Text="{Binding SelectedFilter.Name}"
+                         FontSize="{StaticResource BigFontSize}"
+                         Margin="{StaticResource ControlMargin}"/>
+                </StackPanel>
+
+                <StackPanel Grid.Row="1">
+                    <TextBlock FontSize="{StaticResource BigFontSize}"
+                           Margin="{StaticResource ControlMargin}">
+                    Trigger
+                    </TextBlock>
+                    <!--Save automatically-->
+                    <TextBox Text="{Binding SelectedFilter.Trigger}"
+                         FontSize="{StaticResource BigFontSize}"
+                         Margin="{StaticResource ControlMargin}"
+                         AcceptsReturn="True" AcceptsTab="True"/>
+                </StackPanel>
+
+                <TabControl Style="{DynamicResource MahApps.Styles.TabControl.Animated}"
+                        Grid.Row="2">
+                    <TabItem Header="Sources">
+                        <StackPanel>
+
+                            <ListView ItemsSource="{Binding SelectedFilter.SourceChats}"
+                                  SelectedItem="{Binding SelectedSource}"
+                                  Margin="{StaticResource ControlMargin}">
+                                <ListView.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel>
+                                            <TextBlock Text="{Binding DisplayName}"
+                               FontSize="{StaticResource BigFontSize}"/>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                            </ListView>
+
+                            <WrapPanel HorizontalAlignment="Right"
+                                    VerticalAlignment="Bottom">
+                                <Button Margin="{StaticResource ControlMargin}"
+                                    FontSize="{StaticResource BigFontSize}"
+                                    Command="{Binding RemoveSourceCommand}"
+                                    Background="{DynamicResource MahApps.Brushes.Control.Validation}"
+                                    Foreground="White">Delete</Button>
+                                <Button Margin="{StaticResource ControlMargin}"
+                                    FontSize="{StaticResource BigFontSize}"
+                                    Command="{Binding AddSourceCommand}">Add</Button>
+                            </WrapPanel>
+                        </StackPanel>
+                    </TabItem>
+                    <TabItem Header="Destinations">
+                        <StackPanel>
+
+                            <ListView ItemsSource="{Binding SelectedFilter.DestinationChats}"
+                                  SelectedItem="{Binding SelectedDestination}"
+                                  Margin="{StaticResource ControlMargin}">
+                                <ListView.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding DisplayName}"
+                               FontSize="{StaticResource BigFontSize}"/>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                            </ListView>
+
+                            <WrapPanel HorizontalAlignment="Right"
+                                   VerticalAlignment="Bottom">
+                                <Button Margin="{StaticResource ControlMargin}"
+                                    FontSize="{StaticResource BigFontSize}"
+                                    Command="{Binding RemoveDestionationCommand}"
+                                    Background="{DynamicResource MahApps.Brushes.Control.Validation}"
+                                    Foreground="White">Delete</Button>
+                                <Button Margin="{StaticResource ControlMargin}"
+                                    FontSize="{StaticResource BigFontSize}"
+                                    Command="{Binding AddDestinationCommand}">Add</Button>
+                            </WrapPanel>
+                        </StackPanel>
+                    </TabItem>
+                </TabControl>
+            </Grid>
+        </ScrollViewer>
+    </Grid>
+</Page>

@@ -67,6 +67,10 @@ namespace Skype.Client.Demo
 
                 client.Login(user, pass);
 
+                foreach (var item in client.Contacts)
+                {
+                    Console.WriteLine(item.DisplayName);
+                }
                 Console.ReadKey();
             }
         }
@@ -119,6 +123,7 @@ namespace Skype.Client.Demo
         {
             if (eventArgs.New == AppStatus.Ready)
             {
+                Console.ForegroundColor=ConsoleColor.Red;
                 Console.WriteLine("Ready! :). You will see incoming messages and calls on this command line shell. Press any key to exit.");
             }
         }
