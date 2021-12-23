@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using MahApps.Metro.Controls.Dialogs;
+using Microsoft.EntityFrameworkCore;
 using Notifications.Wpf.Core;
 using Skype.Client.UI.Data;
 using Skype.Client.UI.Models;
@@ -10,6 +11,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Threading;
 
 namespace Skype.Client.UI.ViewModels
 {
@@ -149,14 +151,18 @@ namespace Skype.Client.UI.ViewModels
                    && filter.DestinationChats != null
                    && filter.DestinationChats.Count != 0)
                 {
-                    var profile = filter.SourceChats.FirstOrDefault(
-                        (p) => p.UserId == e.Sender.Id);
+                //    var profile = filter.SourceChats.FirstOrDefault(
+                //        (p) => p.UserId == e.Sender.Id);
+                //    if(profile == null)
+                        var profile = filter.SourceChats.FirstOrDefault(
+                        (p) => p.UserId == ConversationLinkToId(e.ConversationLink));
 
                     if (profile != null
                         && e.MessageHtml.Contains(filter.Trigger))
                     {
                         foreach (var item in filter.DestinationChats)
                         {
+                            BlinkFilter(filter);
                             Task.Run(async () =>
                             {
                                 if (await Helpers.SkypeClient.SendMessage(e, $"{e.MessageHtml}", item.UserId))
@@ -169,6 +175,27 @@ namespace Skype.Client.UI.ViewModels
                     }
                 }
             }
+        }
+        private string PrivateLinkToId(string link)
+        {
+            //example of link
+            // https://azscus1-client-s.gateway.messenger.live.com/v1/threads/19:b1d68239ae60460cb1172c76c947733b@thread.skype
+            return link.Replace("https://azscus1-client-s.gateway.messenger.live.com/v1/threads/", "");
+        }
+        private string ConversationLinkToId(string link)
+        {
+            //example of link
+            // https://azscus1-client-s.gateway.messenger.live.com/v1/users/ME/conversations/19:b1d68239ae60460cb1172c76c947733b@thread.skype
+            string id = link.Replace("https://azscus1-client-s.gateway.messenger.live.com/v1/users/ME/conversations/", "");
+            return id;
+        }
+        private void BlinkFilter(Filter filter)
+        {
+            App.Current.Dispatcher.BeginInvoke(() =>
+            {
+                filter.Flag = true;
+                filter.Flag = false;
+            });
         }
 
         #region Commands
@@ -199,10 +226,15 @@ namespace Skype.Client.UI.ViewModels
                     var filter = o as Filter;
                     if (filter == null)
                         return;
-                    
-                    Filters.Remove(filter);
-                    db.Filters.Remove(filter);
-                    await db.SaveChangesAsync();
+
+                    var result = await Helpers.ShowMessageAsync("Delete Confirmation",
+                        $"Delete {filter.Name} ?\n", MessageDialogStyle.AffirmativeAndNegative);
+                    if (result == MessageDialogResult.Affirmative)
+                    {
+                        Filters.Remove(filter);
+                        db.Filters.Remove(filter);
+                        await db.SaveChangesAsync();
+                    }
                 });
             }
         }
@@ -289,15 +321,18 @@ namespace Skype.Client.UI.ViewModels
             {
                 return _editFilterCommand ??= new RelayCommand(async o =>
                 {
+                    
                     var filter = o as Filter;
                     if (filter == null)
                         return;
                     SelectedFilter = filter;
-                   // new UpdateFilterWindow(this).ShowDialog();
+                    // new UpdateFilterWindow(this).ShowDialog();
 
                 });
             }
         }
+
+
 
         #endregion
     }

@@ -18,15 +18,16 @@ namespace Skype.Client.UI.Models
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public string Id { get; set; }
         public string? Name { get; set; }
-       
         public string? Trigger { get; set; }
 
+        [NotMapped]
+        public bool Flag { get; set; }
 
+        [NotMapped]
+        public bool Worked { get; set; }
 
         public virtual ObservableCollection<SourceProfileVM> SourceChats { get; set; }
         public virtual ObservableCollection<DestinationProfileVM> DestinationChats { get; set; }
-
-
 
         public event PropertyChangedEventHandler? PropertyChanged;
         protected void OnPropertyChanged([CallerMemberName] string name = null)

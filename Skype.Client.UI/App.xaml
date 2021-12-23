@@ -51,7 +51,17 @@
                     </Trigger>
                 </Style.Triggers>
             </Style>
-            
+
+            <Style x:Key="VerticalSeparatorStyle" TargetType="Separator">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Separator">
+                            <Border Background="{TemplateBinding Panel.Background}" />
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
             <sys:Double x:Key="BigFontSize">20</sys:Double>
             <sys:Double x:Key="LargeFontSize">35</sys:Double>
             <Thickness x:Key="ControlMargin">5</Thickness>

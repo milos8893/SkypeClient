@@ -6,11 +6,13 @@
       xmlns:local="clr-namespace:Skype.Client.UI.Views"
       xmlns:viewModels="clr-namespace:Skype.Client.UI.ViewModels"
       xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+      xmlns:converters="clr-namespace:Skype.Client.UI.Converters"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Title="HomePage">
     <Page.Resources>
         <viewModels:MainViewModel x:Key="viewModel"/>
+        <converters:SyncConverter x:Key="syncConverter"/>
         <Style TargetType="ListView" x:Key="ListViewWithoutSelection">
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="Background" Value="Transparent"/>
@@ -38,9 +40,8 @@
                 </Trigger>
             </Style.Triggers>
         </Style>
-        <DataTemplate x:Key="EditingDateTemplate">
-            <DatePicker SelectedDate="{Binding PublishDate}"  />
-        </DataTemplate>
+
+       
     </Page.Resources>
     <Page.DataContext>
         <Binding Source="{StaticResource viewModel}"/>
@@ -55,6 +56,7 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
         <DataGrid ItemsSource="{Binding Filters}"
                   GridLinesVisibility="All"
@@ -64,15 +66,51 @@
                   CanUserDeleteRows="False"
                   IsReadOnly="True" Grid.Row="1"
                   HorizontalAlignment="Left">
-            <DataGrid.RowStyle>
+            <!--<DataGrid.RowStyle>
                 <Style TargetType="DataGridRow">
                     <Setter Property="Selector.IsSelected" Value="False"/>
                 </Style>
-            </DataGrid.RowStyle>
+            </DataGrid.RowStyle>-->
+            <DataGrid.CellStyle>
+                <Style TargetType="DataGridCell">
+                    <Setter Property="Background"
+                            Value="White"/>
+                    <Setter Property="BorderBrush">
+                        <Setter.Value>
+                            <SolidColorBrush Color="White"/>
+                        </Setter.Value>
+                    </Setter>
+
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding Flag}" Value="True" >
+                            <DataTrigger.EnterActions>
+                                <BeginStoryboard>
+                                    <Storyboard 
+                                x:Name="Blink" 
+                                AutoReverse="True" 
+                                RepeatBehavior="1x">
+                                        <ColorAnimationUsingKeyFrames 
+                                    BeginTime="00:00:00"
+                                    Storyboard.TargetProperty="(Background).(SolidColorBrush.Color)">
+                                            <EasingColorKeyFrame 
+                                        KeyTime="00:00:00.300" 
+                                        Value="{StaticResource MahApps.Colors.AccentBase}" />
+
+                                        </ColorAnimationUsingKeyFrames>
+
+                                    </Storyboard>
+                                </BeginStoryboard>
+
+                            </DataTrigger.EnterActions>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </DataGrid.CellStyle>
 
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Name" Binding="{Binding Name}"
                                     Foreground="Black"/>
+
                 <DataGridTextColumn Header="Trigger" Binding="{Binding Trigger}"
                                     Foreground="Black"/>
                 <DataGridTemplateColumn Header="Source Chats">
@@ -145,7 +183,11 @@
                  Margin="10" Foreground="White"
                  Text="{Binding Log}" />
 
-        <ScrollViewer Grid.Column="1"
+        <Separator Width="1" Margin="10 3 10 3" Background="Black" 
+                   Grid.Column="1" Grid.RowSpan="2"
+                   Style="{StaticResource VerticalSeparatorStyle}" />
+            
+        <ScrollViewer Grid.Column="2"
               Grid.RowSpan="2" >
             <Grid 
               Margin="{StaticResource ControlMargin}">

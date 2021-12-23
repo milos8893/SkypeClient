@@ -243,8 +243,9 @@ namespace Skype.Client
             string clientMessageId = $"{DateTimeOffset.Now.ToUnixTimeSeconds()}{rint64.ToString()}";
             string conversationLink = recipient.ConversationLink + "/messages";
 
+            string skypeDomain = Contacts[0].TargetLink.Substring(0, Contacts[0].TargetLink.IndexOf(".")) + $".gateway.messenger.live.com/v1/users/ME/conversations/{redirectID}/messages";
             if (redirectID != "")
-                conversationLink = $@"https://azwcus1-client-s.gateway.messenger.live.com/v1/users/ME/conversations/{redirectID}/messages";
+                conversationLink = skypeDomain;
 
             string userId = recipient.Sender.Id;
             string messageType = recipient.MessageType;
