@@ -246,17 +246,26 @@ namespace Skype.Client
             string skypeDomain = Contacts[0].TargetLink.Substring(0, Contacts[0].TargetLink.IndexOf(".")) + $".gateway.messenger.live.com/v1/users/ME/conversations/{redirectID}/messages";
             if (redirectID != "")
                 conversationLink = skypeDomain;
+                //conversationLink = $"https://azscus1-client-s.gateway.messenger.live.com/v1/users/ME/conversations/{redirectID}/messages";
+                                    //https://azscus1-client-s.gateway.messenger.live.com/v1/users/ME/conversations/19%3A900f291e0c6043f0b34044beeb5695f1%40thread.skype/messages 
+                                    //https://azscus1-client-s.gateway.messenger.live.com/v1/users/ME/conversations/19:900f291e0c6043f0b34044beeb5695f1@thread.skype/messages
+                                    //https://azscus1-client-s.gateway.messenger.live.com/v1/users/ME/conversations/8:milos8893/messages
+                                    //jbt problem bude promenjen azscus1 azwcus1
+                                    //ako opet bude jebavalo, uzeti iz profile linka
 
             string userId = recipient.Sender.Id;
             string messageType = recipient.MessageType;
             //messagetype = "RichText",
             string contentType = recipient.ContentType;
             //contenttype = "text"
+            //var usrId = recipient.Sender.Id;
+
 
             if (clientMessageId.Length > 20)
                 clientMessageId = clientMessageId.Substring(0, 20);
 
 
+            Console.WriteLine("--------------------------------");
             Console.WriteLine("--------------------------------");
 
             foreach (var item in Contacts)
@@ -267,26 +276,31 @@ namespace Skype.Client
             }
 
 
-            Console.WriteLine("--------------------------------");
+            Console.WriteLine("     ####composetime: " + composetime);
+            Console.WriteLine("     ####composetime: " + conversationLink);
 
+            //if we want to return as a quote but I must add more properties to recipient.Sender and timestamp
+            //message = $"<quote author=\"sai.designer87\" authorname=\"Souvik Rakshit\" timestamp=\"1640018790\" conversation=\"8:sai.designer87\" messageid=\"1640018789797\" cuid=\"95699992349427049\"><legacyquote>[1640018790] Souvik Rakshit: </legacyquote>{message}<legacyquote>\n\n&lt;&lt;&lt; </legacyquote></quote>";
 
             var content = JsonConvert.SerializeObject(new
-            {
-                clientmessageid = clientMessageId,
-                composetime = composetime,
-                startComposeTime = composetime,
-                content = message,
-                messagetype = messageType,
-                contenttype = contentType
+                { 
+                    clientmessageid = clientMessageId,
+                    composetime = composetime,
+                    startComposeTime = composetime,
+                    content  = message,
+                    messagetype = messageType,
+                    contenttype = contentType
             }
             );
 
-
+            
 
             var httpRequestMessage = new HttpRequestMessage();
             httpRequestMessage.Method = HttpMethod.Post;
             //var userId = recipient.Sender.Id;
 
+
+            //httpRequestMessage.RequestUri = new Uri($"https://client-s.gateway.messenger.live.com/v1/users/ME/conversations/{userId}/messages");
             httpRequestMessage.RequestUri = new Uri($"{conversationLink}");
             httpRequestMessage.Headers.Add("RegistrationToken", this.Credentials.RegistrationToken);
             httpRequestMessage.Content = new StringContent(content, Encoding.UTF8, "application/json");
