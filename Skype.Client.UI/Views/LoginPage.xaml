@@ -3,7 +3,7 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-      xmlns:local="clr-namespace:Skype.Client.UI.Views"
+      xmlns:local="clr-namespace:Skype.Client.UI"
       xmlns:ViewModel="clr-namespace:Skype.Client.UI.ViewModels" xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
       mc:Ignorable="d"
       d:DesignHeight="450" d:DesignWidth="800"
@@ -48,7 +48,10 @@
         <TextBox Grid.Row="1" Text="{Binding UserName,UpdateSourceTrigger=PropertyChanged}"></TextBox>
 
         <TextBlock Grid.Row="2">Password *</TextBlock>
-        <TextBox Grid.Row="3" Text="{Binding Password,UpdateSourceTrigger=PropertyChanged}"></TextBox>
+        <PasswordBox Grid.Row="3"
+                     local:PasswordHelper.Attach="True" 
+                     local:PasswordHelper.Password="{Binding Password, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" 
+                     MinWidth="400" />
 
         <TextBlock Grid.Row="4" Text="{Binding Status}"
                    VerticalAlignment="Bottom" 

@@ -68,6 +68,12 @@
             <Style TargetType="{x:Type Control}" x:Key="GlobalFontSize">
                 <Setter Property="FontSize" Value="{StaticResource BigFontSize}"/>
             </Style>
+
+            <Style x:Key="ConsoleTextBox" TargetType="{x:Type TextBox}">
+                <Setter Property="IsReadOnly" Value="True"/>
+                <Setter Property="Background" Value="Black"/>
+                <Setter Property="Foreground" Value="White"/>
+            </Style>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

@@ -3,6 +3,7 @@ using MahApps.Metro.Controls.Dialogs;
 using Microsoft.Extensions.DependencyInjection;
 using Notifications.Wpf.Core;
 using Skype.Client.CefSharp.OffScreen;
+using Skype.Client.UI.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,6 +31,7 @@ namespace Skype.Client.UI
         static Helpers()
         {
             SkypeClient = Service.Provider.GetService<SkypeCefOffScreenClient>();
+            
             _notificationManager = new NotificationManager();
             LogEvent += Helpers_LogEvent;
             RecordedLog = new StringBuilder();

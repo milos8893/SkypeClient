@@ -1,7 +1,10 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Skype.Client.CefSharp.OffScreen;
+using Skype.Client.UI.Data;
 using Skype.Client.UI.Loggers;
+using Skype.Client.UI.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,7 +23,7 @@ namespace Skype.Client.UI
             _services.AddLogging(logging =>
             {
                 logging.AddDebug();
-                logging.AddUILogger();
+                //logging.AddUILogger();
             });
             _services.Configure<LoggerFilterOptions>(options => options.MinLevel = LogLevel.Debug);
 

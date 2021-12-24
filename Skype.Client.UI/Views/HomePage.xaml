@@ -7,9 +7,9 @@
       xmlns:viewModels="clr-namespace:Skype.Client.UI.ViewModels"
       xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
       xmlns:converters="clr-namespace:Skype.Client.UI.Converters"
-      mc:Ignorable="d" 
+      mc:Ignorable="d"  
       d:DesignHeight="450" d:DesignWidth="800"
-      Title="HomePage">
+      Title="Skype Redirection Bot v1.0">
     <Page.Resources>
         <viewModels:MainViewModel x:Key="viewModel"/>
         <converters:SyncConverter x:Key="syncConverter"/>
@@ -41,31 +41,43 @@
             </Style.Triggers>
         </Style>
 
-       
+
     </Page.Resources>
     <Page.DataContext>
         <Binding Source="{StaticResource viewModel}"/>
     </Page.DataContext>
 
-    <Grid Margin="10">
+    <Grid Margin="10,2,10,10">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="2*"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="Auto"/>
-        </Grid.ColumnDefinitions>
+
+        <Grid.Resources>
+            <VisualBrush x:Key="StripesBrush" TileMode="Tile"
+               Viewport="0,26,3,105"
+               Viewbox="0,0,10,25" ViewportUnits="Absolute" 
+               ViewboxUnits="Absolute">
+                <VisualBrush.Visual>
+                    <Grid>
+                        <Line X1="0" X2="10000" Y1="0" Y2="0" Stroke="LightGray"/>
+
+                    </Grid>
+                </VisualBrush.Visual>
+            </VisualBrush>
+        </Grid.Resources>
+
         <DataGrid ItemsSource="{Binding Filters}"
                   GridLinesVisibility="All"
                   AutoGenerateColumns="False"
+                  EnableRowVirtualization="True"
                   FontSize="{StaticResource BigFontSize}"
                   CanUserAddRows="False"
                   CanUserDeleteRows="False"
                   IsReadOnly="True" Grid.Row="1"
-                  HorizontalAlignment="Left">
+                  HorizontalAlignment="Left"
+                  Background="{StaticResource StripesBrush}">
             <!--<DataGrid.RowStyle>
                 <Style TargetType="DataGridRow">
                     <Setter Property="Selector.IsSelected" Value="False"/>
@@ -106,38 +118,46 @@
                     </Style.Triggers>
                 </Style>
             </DataGrid.CellStyle>
-
+            <DataGrid.Resources>
+                <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource MahApps.Styles.DataGridColumnHeader}">
+                    <Setter Property="Foreground" Value="{DynamicResource MahApps.Brushes.Gray5}" />
+                </Style>
+            </DataGrid.Resources>
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Name" Binding="{Binding Name}"
-                                    Foreground="Black"/>
+                                    Foreground="Black"
+                                    Width="*"/>
 
                 <DataGridTextColumn Header="Trigger" Binding="{Binding Trigger}"
-                                    Foreground="Black"/>
-                <DataGridTemplateColumn Header="Source Chats">
+                                    Foreground="Black"
+                                    Width="2*"/>
+                <DataGridTemplateColumn Header="Sources"
+                                        Width="2*">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <ListView ItemsSource="{Binding SourceChats}"
-                                      Style="{StaticResource ListViewWithoutSelection}">
-                                <ListView.ItemTemplate>
+                            <ItemsControl ItemsSource="{Binding SourceChats}"
+                                          Foreground="Black">
+                                <ItemsControl.ItemTemplate>
                                     <DataTemplate>
                                         <TextBlock Text="{Binding DisplayName}"/>
                                     </DataTemplate>
-                                </ListView.ItemTemplate>
-                            </ListView>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTemplateColumn Header="Destination Chats">
+                <DataGridTemplateColumn Header="Destinations"
+                                        Width="2*">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <ListView ItemsSource="{Binding DestinationChats}"
-                                      Style="{StaticResource ListViewWithoutSelection}">
-                                <ListView.ItemTemplate>
+                            <ItemsControl ItemsSource="{Binding DestinationChats}"
+                                          Foreground="Black">
+                                <ItemsControl.ItemTemplate>
                                     <DataTemplate>
                                         <TextBlock Text="{Binding DisplayName}"/>
                                     </DataTemplate>
-                                </ListView.ItemTemplate>
-                            </ListView>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
@@ -163,123 +183,22 @@
             </DataGrid.Columns>
         </DataGrid>
 
-        <WrapPanel Margin="{StaticResource ControlMargin}"
-                   HorizontalAlignment="Left">
-            <TextBlock FontSize="{StaticResource BigFontSize}"
-                       VerticalAlignment="Center">Filter Name</TextBlock>
-            <TextBox MinWidth="100" Text="{Binding NewFilterName,UpdateSourceTrigger=PropertyChanged}"
-                     Margin="{StaticResource ControlMargin}"
-                     FontSize="{StaticResource BigFontSize}"></TextBox>
-            <WrapPanel HorizontalAlignment="Right">
-                <Button Margin="{StaticResource ControlMargin}"
-                    FontSize="{StaticResource BigFontSize}"
-                    Command="{Binding AddFilterCommand}">Add</Button>
+
+        <Button Margin="0,0,0,5"
+                HorizontalAlignment="Right"
+                Background="Green"
+                Command="{Binding AddFilterCommand}">
+            <WrapPanel>
+                   <TextBlock VerticalAlignment="Center">Add New Filter</TextBlock>
             </WrapPanel>
+        </Button>
 
-        </WrapPanel>
+        <TextBox TextChanged="TextBox_TextChanged"
+                 Style="{StaticResource ConsoleTextBox}"
+                 Grid.Row="2" Margin="10"
+                 Text="{Binding Log,Mode=OneWay}"
+                 ScrollViewer.VerticalScrollBarVisibility="Auto"/>
 
-        <TextBox AcceptsReturn="True" Grid.ColumnSpan="3"
-                 Grid.Row="2" Background="Black"
-                 Margin="10" Foreground="White"
-                 Text="{Binding Log}" />
 
-        <Separator Width="1" Margin="10 3 10 3" Background="Black" 
-                   Grid.Column="1" Grid.RowSpan="2"
-                   Style="{StaticResource VerticalSeparatorStyle}" />
-            
-        <ScrollViewer Grid.Column="2"
-              Grid.RowSpan="2" >
-            <Grid 
-              Margin="{StaticResource ControlMargin}">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
-
-                <StackPanel>
-                    <TextBlock FontSize="{StaticResource BigFontSize}"
-                           Margin="{StaticResource ControlMargin}">
-                    Name
-                    </TextBlock>
-                    <!--Save automatically-->
-                    <TextBox Text="{Binding SelectedFilter.Name}"
-                         FontSize="{StaticResource BigFontSize}"
-                         Margin="{StaticResource ControlMargin}"/>
-                </StackPanel>
-
-                <StackPanel Grid.Row="1">
-                    <TextBlock FontSize="{StaticResource BigFontSize}"
-                           Margin="{StaticResource ControlMargin}">
-                    Trigger
-                    </TextBlock>
-                    <!--Save automatically-->
-                    <TextBox Text="{Binding SelectedFilter.Trigger}"
-                         FontSize="{StaticResource BigFontSize}"
-                         Margin="{StaticResource ControlMargin}"
-                         AcceptsReturn="True" AcceptsTab="True"/>
-                </StackPanel>
-
-                <TabControl Style="{DynamicResource MahApps.Styles.TabControl.Animated}"
-                        Grid.Row="2">
-                    <TabItem Header="Sources">
-                        <StackPanel>
-
-                            <ListView ItemsSource="{Binding SelectedFilter.SourceChats}"
-                                  SelectedItem="{Binding SelectedSource}"
-                                  Margin="{StaticResource ControlMargin}">
-                                <ListView.ItemTemplate>
-                                    <DataTemplate>
-                                        <StackPanel>
-                                            <TextBlock Text="{Binding DisplayName}"
-                               FontSize="{StaticResource BigFontSize}"/>
-                                        </StackPanel>
-                                    </DataTemplate>
-                                </ListView.ItemTemplate>
-                            </ListView>
-
-                            <WrapPanel HorizontalAlignment="Right"
-                                    VerticalAlignment="Bottom">
-                                <Button Margin="{StaticResource ControlMargin}"
-                                    FontSize="{StaticResource BigFontSize}"
-                                    Command="{Binding RemoveSourceCommand}"
-                                    Background="{DynamicResource MahApps.Brushes.Control.Validation}"
-                                    Foreground="White">Delete</Button>
-                                <Button Margin="{StaticResource ControlMargin}"
-                                    FontSize="{StaticResource BigFontSize}"
-                                    Command="{Binding AddSourceCommand}">Add</Button>
-                            </WrapPanel>
-                        </StackPanel>
-                    </TabItem>
-                    <TabItem Header="Destinations">
-                        <StackPanel>
-
-                            <ListView ItemsSource="{Binding SelectedFilter.DestinationChats}"
-                                  SelectedItem="{Binding SelectedDestination}"
-                                  Margin="{StaticResource ControlMargin}">
-                                <ListView.ItemTemplate>
-                                    <DataTemplate>
-                                        <TextBlock Text="{Binding DisplayName}"
-                               FontSize="{StaticResource BigFontSize}"/>
-                                    </DataTemplate>
-                                </ListView.ItemTemplate>
-                            </ListView>
-
-                            <WrapPanel HorizontalAlignment="Right"
-                                   VerticalAlignment="Bottom">
-                                <Button Margin="{StaticResource ControlMargin}"
-                                    FontSize="{StaticResource BigFontSize}"
-                                    Command="{Binding RemoveDestionationCommand}"
-                                    Background="{DynamicResource MahApps.Brushes.Control.Validation}"
-                                    Foreground="White">Delete</Button>
-                                <Button Margin="{StaticResource ControlMargin}"
-                                    FontSize="{StaticResource BigFontSize}"
-                                    Command="{Binding AddDestinationCommand}">Add</Button>
-                            </WrapPanel>
-                        </StackPanel>
-                    </TabItem>
-                </TabControl>
-            </Grid>
-        </ScrollViewer>
     </Grid>
 </Page>

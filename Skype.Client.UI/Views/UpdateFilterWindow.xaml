@@ -5,108 +5,133 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Skype.Client.UI.Views"
         xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
-        xmlns:ViewModels="clr-namespace:Skype.Client.UI.ViewModels"
-        mc:Ignorable="d"
-        Title="UpdateFilterWindow" Height="450" Width="800">
-    <Window.Resources>
-        <ViewModels:MainViewModel x:Key="viewModel"/>
-    </Window.Resources>
-    <Window.DataContext>
-        <Binding Source="{StaticResource viewModel}"/>
-    </Window.DataContext>
-    <Grid>
+        xmlns:ViewModels="clr-namespace:Skype.Client.UI.ViewModels" xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+        mc:Ignorable="d" WindowStartupLocation="CenterScreen"
+        Title="Add Filter" Height="450" Width="500">
+    <Grid Margin="{StaticResource ControlMargin}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
+
         <StackPanel Margin="{StaticResource ControlMargin}">
-            <TextBlock >Filter Name</TextBlock>
-            <TextBox MinWidth="100" Text="{Binding NewFilterName,UpdateSourceTrigger=PropertyChanged}"
-                     Margin="{StaticResource ControlMargin}"></TextBox>
-            <WrapPanel HorizontalAlignment="Right">
-                <Button Margin="{StaticResource ControlMargin}"
-                    FontSize="{StaticResource BigFontSize}"
-                    Command="{Binding RemoveCommand}">Delete</Button>
-                <Button Margin="{StaticResource ControlMargin}"
-                    FontSize="{StaticResource BigFontSize}"
-                    Command="{Binding AddFilterCommand}">Add</Button>
-            </WrapPanel>
+            <TextBlock FontSize="{StaticResource BigFontSize}"
+                       Margin="{StaticResource ControlMargin}"
+                       Foreground="{DynamicResource MahApps.Brushes.Gray2}">
+                    Name
+            </TextBlock>
 
+            <TextBox Text="{Binding FilterName}"
+                         FontSize="{StaticResource BigFontSize}"
+                         Margin="{StaticResource ControlMargin}"/>
         </StackPanel>
-        <ListView ItemsSource="{Binding Filters}"
-                  SelectedItem="{Binding SelectedFilter}"
-                  Grid.Row="1" Margin="{StaticResource ControlMargin}">
-            <ListView.ItemTemplate>
-                <DataTemplate>
-                    <TextBlock FontSize="{StaticResource BigFontSize}"
-                               Text="{Binding Name}"/>
-                </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
 
+        <StackPanel Grid.Column="1"
+                    Margin="{StaticResource ControlMargin}">
+            <TextBlock FontSize="{StaticResource BigFontSize}"
+                       Margin="{StaticResource ControlMargin}"
+                       Foreground="{DynamicResource MahApps.Brushes.Gray2}">
+                    Trigger
+            </TextBlock>
+            <TextBox Text="{Binding FilterTrigger}"
+                         FontSize="{StaticResource BigFontSize}"
+                         Margin="{StaticResource ControlMargin}"
+                         AcceptsReturn="True" AcceptsTab="True"/>
+        </StackPanel>
 
-        <WrapPanel Grid.Column="1" HorizontalAlignment="Right"
-                   VerticalAlignment="Bottom">
-            <Button Margin="{StaticResource ControlMargin}"
-                    FontSize="{StaticResource BigFontSize}"
-                    Command="{Binding RemoveSourceCommand}">Delete</Button>
-            <Button Margin="{StaticResource ControlMargin}"
-                    FontSize="{StaticResource BigFontSize}"
-                    Command="{Binding AddSourceCommand}">Add</Button>
-        </WrapPanel>
-        <ListView ItemsSource="{Binding SelectedFilter.SourceChats}"
-                  SelectedItem="{Binding SelectedSource}"
-                  Margin="{StaticResource ControlMargin}"
-                  Grid.Row="1" Grid.Column="1">
-            <ListView.ItemTemplate>
-                <DataTemplate>
-                    <StackPanel>
+        <StackPanel Grid.Row="1" 
+                    Margin="{StaticResource ControlMargin}">
+            <TextBlock FontSize="{StaticResource BigFontSize}"
+                       Foreground="{DynamicResource MahApps.Brushes.Gray2}">
+                Source Chats
+            </TextBlock>
+            <ListView ItemsSource="{Binding Filter.SourceChats}"
+                      SelectedItem="{Binding SelectedSource}"
+                      Margin="{StaticResource ControlMargin}"
+                      Height="150" BorderThickness="1">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel>
+                            <TextBlock Text="{Binding DisplayName}"
+                               FontSize="{StaticResource BigFontSize}"/>
+                        </StackPanel>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+
+            <WrapPanel HorizontalAlignment="Right"
+                       VerticalAlignment="Bottom">
+                <Button Margin="{StaticResource ControlMargin}"
+                        FontSize="{StaticResource BigFontSize}"
+                        Command="{Binding RemoveSourceCommand}"
+                        Background="{DynamicResource MahApps.Brushes.Control.Validation}"
+                        Foreground="White">
+                    <iconPacks:PackIconModern  Kind="Delete" VerticalAlignment="Center" Margin="{StaticResource ControlMargin}" />
+                </Button>
+                <Button Margin="{StaticResource ControlMargin}"
+                        FontSize="{StaticResource BigFontSize}"
+                        Command="{Binding AddSourceCommand}"
+                        Background="Green">
+                    <iconPacks:PackIconModern  Kind="Add" VerticalAlignment="Center" Margin="{StaticResource ControlMargin}" />
+                </Button>
+            </WrapPanel>
+        </StackPanel>
+
+        <StackPanel Grid.Row="1" Grid.Column="1"
+                    Margin="{StaticResource ControlMargin}">
+            <TextBlock FontSize="{StaticResource BigFontSize}"
+                       Foreground="{DynamicResource MahApps.Brushes.Gray2}">
+                Destination Chats
+            </TextBlock>
+            <ListView ItemsSource="{Binding Filter.DestinationChats}"
+                      SelectedItem="{Binding SelectedDestination}"
+                      Margin="{StaticResource ControlMargin}"
+                      Height="150" BorderThickness="1">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
                         <TextBlock Text="{Binding DisplayName}"
                                FontSize="{StaticResource BigFontSize}"/>
-                    </StackPanel>
-                </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
 
-        <TextBox Text="{Binding TriggerText,UpdateSourceTrigger=PropertyChanged}"
-                 Grid.Row="1" Grid.Column="2"
-                 Margin="{StaticResource ControlMargin}"
-                 TextWrapping="Wrap" AcceptsReturn="True"
-                 VerticalScrollBarVisibility="Visible"/>
-        <WrapPanel Grid.Column="2"
-                   VerticalAlignment="Bottom"
+            <WrapPanel HorizontalAlignment="Right"
+                                   VerticalAlignment="Bottom">
+                <Button Margin="{StaticResource ControlMargin}"
+                        FontSize="{StaticResource BigFontSize}"
+                        Command="{Binding RemoveDestionationCommand}"
+                        Background="{DynamicResource MahApps.Brushes.Control.Validation}"
+                        Foreground="White">
+                    <iconPacks:PackIconModern  Kind="Delete" VerticalAlignment="Center" Margin="{StaticResource ControlMargin}" />
+                </Button>
+                <Button Margin="{StaticResource ControlMargin}"
+                        FontSize="{StaticResource BigFontSize}"
+                        Command="{Binding AddDestinationCommand}"
+                        Background="Green">
+                    <iconPacks:PackIconModern  Kind="Add" VerticalAlignment="Center" Margin="{StaticResource ControlMargin}" />
+                </Button>
+            </WrapPanel>
+        </StackPanel>
+        <WrapPanel Grid.Row="3" Grid.ColumnSpan="2"
                    HorizontalAlignment="Right">
             <Button FontSize="{StaticResource BigFontSize}"
+                    Background="{DynamicResource MahApps.Brushes.Control.Validation}"
                     Margin="{StaticResource ControlMargin}"
-                    Command="{Binding UpdateTriggerCommand}">Update Trigger</Button>
+                    Click="CloseButton_Click">
+                Close
+            </Button>
+            <Button FontSize="{StaticResource BigFontSize}"
+                    Margin="{StaticResource ControlMargin}"
+                    Command="{Binding UpdateFilterCommand}"
+                    Visibility="{Binding IsNewItem}"
+                    Click="SaveButton_Click">
+                Save
+            </Button>
         </WrapPanel>
-
-
-        <WrapPanel Grid.Column="3" HorizontalAlignment="Right"
-                   VerticalAlignment="Bottom">
-            <Button Margin="{StaticResource ControlMargin}"
-                    FontSize="{StaticResource BigFontSize}"
-                    Command="{Binding RemoveDestionationCommand}">Delete</Button>
-            <Button Margin="{StaticResource ControlMargin}"
-                    FontSize="{StaticResource BigFontSize}"
-                    Command="{Binding AddDestinationCommand}">Add</Button>
-        </WrapPanel>
-        <ListView ItemsSource="{Binding SelectedFilter.DestinationChats}"
-                  SelectedItem="{Binding SelectedDestination}"
-                  Margin="{StaticResource ControlMargin}"
-                  Grid.Row="1" Grid.Column="3">
-            <ListView.ItemTemplate>
-                <DataTemplate>
-                    <TextBlock Text="{Binding DisplayName}"
-                               FontSize="{StaticResource BigFontSize}"/>
-                </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
     </Grid>
 </mah:MetroWindow>

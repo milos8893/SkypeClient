@@ -21,77 +21,31 @@ namespace Skype.Client.UI.ViewModels
         private FilterDbContext db = SingletonDb.FilterDb;
         private string _newFilterName;
         private Filter _selectedFilter;
-        private SourceProfileVM _selectedSource;
-        private string _selectedTriger;
-        private DestinationProfileVM _selectedDestination;
         private string _log;
+        private StringBuilder _logBuilder;
+        private bool _isReady = false;
 
         private RelayCommand _addFilterCommand;
         private RelayCommand _removeFilterCommand;
-        private RelayCommand _addSourceCommand;
-        private RelayCommand _removeSourceCommand;
-        private RelayCommand _updateTriggerCommand;
-        private RelayCommand _addDestinationCommand;
-        private RelayCommand _removeDestionationCommand;
 
         private RelayCommand _editFilterCommand;
         #endregion
 
         #region Properties
-        public string NewFilterName
-        {
-            get { return _newFilterName; }
-            set
-            {
-                _newFilterName = value;
-                OnPropertyChanged();
-            }
-        }
         public Filter SelectedFilter
         {
             get { return _selectedFilter; }
             set
             {
                 _selectedFilter = value;
-                TriggerText = SelectedFilter?.Trigger;
                 SelectedFilter.PropertyChanged += SelectedFilter_PropertyChanged;
-                OnPropertyChanged();
-            }
-        }
-
-      
-
-        public SourceProfileVM SelectedSource
-        {
-            get { return _selectedSource; }
-            set
-            {
-                _selectedSource = value;
-                OnPropertyChanged();
-            }
-        }
-        public string TriggerText
-        {
-            get { return _selectedTriger; }
-            set
-            {
-                _selectedTriger = value;
-                OnPropertyChanged();
-            }
-        }
-        public DestinationProfileVM SelectedDestination
-        {
-            get { return _selectedDestination; }
-            set
-            {
-                _selectedDestination = value;
                 OnPropertyChanged();
             }
         }
         public string Log
         {
-            get { return _log; }
-            set { _log = value; }
+            get { return _logBuilder.ToString(); }
+            //set { _log = value; }
         }
 
         #endregion
@@ -99,19 +53,33 @@ namespace Skype.Client.UI.ViewModels
         public ObservableCollection<Filter> Filters { get; set; }
         public MainViewModel()
         {
-            Filters = new ObservableCollection<Filter>(SingletonDb.FilterDb.Filters
-                .Include(f => f.SourceChats)
-                .Include(f => f.DestinationChats)
-                .ToList());
+            _logBuilder = new StringBuilder();
+            LogEvent("Starting ...");
+            Refresh();
             Helpers.SkypeClient.MessageReceived += SkypeClient_MessageReceived;
             Helpers.SkypeClient.IncomingCall += SkypeClient_IncomingCall;
             Helpers.LogEvent += Helpers_OnLogEvent;
-            this.Log = Helpers.RecordedLog.ToString();
+            Helpers.SkypeClient.StatusChanged += SkypeClient_StatusChanged;
+            //this.Log = Helpers.RecordedLog.ToString();
         }
 
+        private void SkypeClient_StatusChanged(object? sender, StatusChangedEventArgs e)
+        {
+            if (e.New == AppStatus.Ready && _isReady == false)
+            {
+                LogEvent("Skype login Success");
+                _isReady = true;
+            }
+
+        }
+        private void LogEvent(string log)
+        {
+            _logBuilder.AppendLine($"{DateTime.Now} > {log}");
+            OnPropertyChanged(nameof(Log));
+        }
         private void Helpers_OnLogEvent(string obj)
         {
-            Log = Helpers.RecordedLog.ToString();
+            //Log = Helpers.RecordedLog.ToString();
         }
         private void SelectedFilter_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
@@ -151,24 +119,24 @@ namespace Skype.Client.UI.ViewModels
                    && filter.DestinationChats != null
                    && filter.DestinationChats.Count != 0)
                 {
-                //    var profile = filter.SourceChats.FirstOrDefault(
-                //        (p) => p.UserId == e.Sender.Id);
-                //    if(profile == null)
-                        var profile = filter.SourceChats.FirstOrDefault(
-                        (p) => p.UserId == ConversationLinkToId(e.ConversationLink));
+                    //    var profile = filter.SourceChats.FirstOrDefault(
+                    //        (p) => p.UserId == e.Sender.Id);
+                    //    if(profile == null)
+                    var profile = filter.SourceChats.FirstOrDefault(
+                    (p) => p.UserId == ConversationLinkToId(e.ConversationLink));
 
                     if (profile != null
                         && e.MessageHtml.Contains(filter.Trigger))
                     {
                         foreach (var item in filter.DestinationChats)
                         {
-                            BlinkFilter(filter);
+                            //BlinkFilter(filter);
                             Task.Run(async () =>
                             {
                                 if (await Helpers.SkypeClient.SendMessage(e, $"{e.MessageHtml}", item.UserId))
-                                    Debug.Write("Message Sent succesfully");
+                                    LogEvent($"Forwarded message to > {item.DisplayName}");
                                 else
-                                    Debug.Write("Failed");
+                                    Debug.Write($"Forward failed to > {item.DisplayName}");
                             });
                         }
 
@@ -197,6 +165,13 @@ namespace Skype.Client.UI.ViewModels
                 filter.Flag = false;
             });
         }
+        private void Refresh()
+        {
+            Filters = new ObservableCollection<Filter>(SingletonDb.FilterDb.Filters
+                .Include(f => f.SourceChats)
+                .Include(f => f.DestinationChats)
+                .ToList());
+        }
 
         #region Commands
         public RelayCommand AddFilterCommand
@@ -205,15 +180,9 @@ namespace Skype.Client.UI.ViewModels
             {
                 return _addFilterCommand ??= new RelayCommand(async o =>
                 {
-                    var filter = new Filter
-                    {
-                        Name = _newFilterName
-                    };
-                    Filters.Insert(0,filter);
-                    SelectedFilter = filter;
-                    db.Add(filter);
-                    await db.SaveChangesAsync();
-                }, (o) => !String.IsNullOrWhiteSpace(_newFilterName));
+                    new UpdateFilterWindow().ShowDialog();
+                    Refresh();
+                });
             }
         }
 
@@ -239,81 +208,6 @@ namespace Skype.Client.UI.ViewModels
             }
         }
 
-        public RelayCommand AddSourceCommand
-        {
-            get
-            {
-                return _addSourceCommand ??= new RelayCommand(async o =>
-                {
-
-                    if (SelectedFilter.SourceChats == null)
-                        SelectedFilter.SourceChats = new ObservableCollection<SourceProfileVM>();
-
-                    new AddSourceChatWindow(SelectedFilter.SourceChats).ShowDialog();
-
-
-                    await db.SaveChangesAsync();
-                }, (o) => SelectedFilter != null);
-            }
-        }
-
-        public RelayCommand RemoveSourceCommand
-        {
-            get
-            {
-                return _removeSourceCommand ??= new RelayCommand(async o =>
-                {
-                    if (SelectedFilter.SourceChats != null)
-                    {
-                        SelectedFilter.SourceChats.Remove(SelectedSource);
-                        await db.SaveChangesAsync();
-                    }
-                }, (o) => SelectedSource != null);
-            }
-        }
-
-        public RelayCommand UpdateTriggerCommand
-        {
-            get
-            {
-                return _updateTriggerCommand ??= new RelayCommand(async o =>
-                {
-                    SelectedFilter.Trigger = TriggerText;
-                    await db.SaveChangesAsync();
-                }, o => !string.IsNullOrEmpty(TriggerText)
-                 && SelectedFilter.Trigger != TriggerText);
-            }
-        }
-
-        public RelayCommand AddDestinationCommand
-        {
-            get
-            {
-                return _addDestinationCommand ??= new RelayCommand(async o =>
-                {
-                    if (SelectedFilter.DestinationChats == null)
-                        SelectedFilter.DestinationChats = new ObservableCollection<DestinationProfileVM>();
-
-                    new AddSourceChatWindow(SelectedFilter.DestinationChats).ShowDialog();
-                    await db.SaveChangesAsync();
-                }, (o) => SelectedFilter != null);
-            }
-        }
-
-        public RelayCommand RemoveDestionationCommand
-        {
-            get
-            {
-                return _removeDestionationCommand ??= new RelayCommand(async o =>
-                {
-                    if (SelectedFilter.DestinationChats != null)
-                    {
-                        SelectedFilter.DestinationChats.Remove(SelectedDestination);
-                        await db.SaveChangesAsync();
-                    }
-                }, (o) => SelectedDestination != null);
-            }
-        }
 
         public RelayCommand EditFilterCommand
         {
@@ -321,13 +215,12 @@ namespace Skype.Client.UI.ViewModels
             {
                 return _editFilterCommand ??= new RelayCommand(async o =>
                 {
-                    
+
                     var filter = o as Filter;
                     if (filter == null)
                         return;
-                    SelectedFilter = filter;
-                    // new UpdateFilterWindow(this).ShowDialog();
-
+                    new UpdateFilterWindow(filter).ShowDialog();
+                    Refresh();
                 });
             }
         }

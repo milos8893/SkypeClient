@@ -6,8 +6,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Skype.Client.UI"
         xmlns:notifications="clr-namespace:Notifications.Wpf.Core.Controls;assembly=Notifications.Wpf.Core"
-        mc:Ignorable="d"
-        Title="Skype" Height="700" Width="1000">
+        mc:Ignorable="d" TitleCharacterCasing="Normal"
+        Title="Skype Redirection Bot v1.0" MinHeight="700" MinWidth="1000"
+        Height="700" Width="1000">
     <Grid>
         <Frame Name="MainFrame" Source="/Views/LoginPage.xaml" 
                NavigationUIVisibility="Hidden"/>

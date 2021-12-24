@@ -11,8 +11,8 @@ namespace Skype.Client.UI.ViewModels
     public class LoginViewModel : BaseViewModel, IDisposable
     {
         #region private fields and commands
-        private string _username = "appbre@gmail.com";
-        private string _password = "aabbcc112233";
+        private string _username;
+        private string _password;
         private string _status;
 
         private RelayCommand _loginCommand;
@@ -21,12 +21,14 @@ namespace Skype.Client.UI.ViewModels
         public LoginViewModel()
         {
             Helpers.SkypeClient.StatusChanged += SkypeClient_StatusChanged;
+            UserName = Properties.Settings.Default.UserName;
+            Password = Base64Decode(Properties.Settings.Default.Password);
         }
 
         private void SkypeClient_StatusChanged(object? sender, StatusChangedEventArgs e)
         {
             Status = e.New.ToString();
-            if (e.New == AppStatus.Loading)
+            if (e.New == AppStatus.Authenticating)
             {
                 App.Current.Dispatcher.BeginInvoke(() =>
                 {
@@ -74,12 +76,29 @@ namespace Skype.Client.UI.ViewModels
                 return _loginCommand ??= new RelayCommand(o =>
                 {
                     Helpers.SkypeClient.Login(UserName, Password);
+                    SaveUserCredentials();
 
                 }, (o) => !String.IsNullOrWhiteSpace(UserName)
                  && !String.IsNullOrWhiteSpace(Password));
             }
         }
+        public void SaveUserCredentials()
+        {
+            Properties.Settings.Default.UserName = UserName;
+            Properties.Settings.Default.Password = Base64Encode(Password);
 
+            Properties.Settings.Default.Save();
+        }
+        public static string Base64Encode(string plainText)
+        {
+            var plainTextBytes = System.Text.Encoding.UTF8.GetBytes(plainText);
+            return System.Convert.ToBase64String(plainTextBytes);
+        }
+        public static string Base64Decode(string base64EncodedData)
+        {
+            var base64EncodedBytes = System.Convert.FromBase64String(base64EncodedData);
+            return System.Text.Encoding.UTF8.GetString(base64EncodedBytes);
+        }
         public void Dispose()
         {
             Helpers.SkypeClient.StatusChanged -= SkypeClient_StatusChanged;

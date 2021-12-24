@@ -18,7 +18,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "repo", "repo", "{94E1BB5D-C
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Skype.Client.UI", "Skype.Client.UI\Skype.Client.UI.csproj", "{4A42B4EE-B455-48A4-AA7E-0F8332F15543}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Skype.Client.UI", "Skype.Client.UI\Skype.Client.UI.csproj", "{4A42B4EE-B455-48A4-AA7E-0F8332F15543}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

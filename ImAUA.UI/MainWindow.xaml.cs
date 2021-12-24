@@ -13,21 +13,16 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Skype.Client.UI.Views
+namespace ImAUA.UI
 {
     /// <summary>
-    /// Interaction logic for HomePage.xaml
+    /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class HomePage : Page
+    public partial class MainWindow : Window
     {
-        public HomePage()
+        public MainWindow()
         {
             InitializeComponent();
-        }
-
-        private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            ((TextBox)sender).ScrollToEnd();
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using MahApps.Metro.Controls;
+using Skype.Client.UI.Models;
 using Skype.Client.UI.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -24,10 +25,22 @@ namespace Skype.Client.UI.Views
         public UpdateFilterWindow()
         {
             InitializeComponent();
+            this.DataContext = new UpdateFilterViewModel();
         }
-        public UpdateFilterWindow(MainViewModel mainViewModel) : this()
+        public UpdateFilterWindow(Filter filter) : this()
         {
-            this.DataContext = mainViewModel;
+            this.DataContext = new UpdateFilterViewModel(filter);
+            this.Title = "Update Filter";
+        }
+
+        private void CloseButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.Close();
+        }
+
+        private void SaveButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.Close();
         }
     }
 }
