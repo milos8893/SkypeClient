@@ -19,9 +19,7 @@ namespace Skype.Client.UI.ViewModels
     {
         #region private fields and commands
         private FilterDbContext db = SingletonDb.FilterDb;
-        private string _newFilterName;
         private Filter _selectedFilter;
-        private string _log;
         private StringBuilder _logBuilder;
         private bool _isReady = false;
 
@@ -58,7 +56,6 @@ namespace Skype.Client.UI.ViewModels
             Refresh();
             Helpers.SkypeClient.MessageReceived += SkypeClient_MessageReceived;
             Helpers.SkypeClient.IncomingCall += SkypeClient_IncomingCall;
-            Helpers.LogEvent += Helpers_OnLogEvent;
             Helpers.SkypeClient.StatusChanged += SkypeClient_StatusChanged;
             //this.Log = Helpers.RecordedLog.ToString();
         }
@@ -76,10 +73,6 @@ namespace Skype.Client.UI.ViewModels
         {
             _logBuilder.AppendLine($"{DateTime.Now} > {log}");
             OnPropertyChanged(nameof(Log));
-        }
-        private void Helpers_OnLogEvent(string obj)
-        {
-            //Log = Helpers.RecordedLog.ToString();
         }
         private void SelectedFilter_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
@@ -119,9 +112,6 @@ namespace Skype.Client.UI.ViewModels
                    && filter.DestinationChats != null
                    && filter.DestinationChats.Count != 0)
                 {
-                    //    var profile = filter.SourceChats.FirstOrDefault(
-                    //        (p) => p.UserId == e.Sender.Id);
-                    //    if(profile == null)
                     var profile = filter.SourceChats.FirstOrDefault(
                     (p) => p.UserId == ConversationLinkToId(e.ConversationLink));
 
@@ -130,7 +120,6 @@ namespace Skype.Client.UI.ViewModels
                     {
                         foreach (var item in filter.DestinationChats)
                         {
-                            //BlinkFilter(filter);
                             Task.Run(async () =>
                             {
                                 if (await Helpers.SkypeClient.SendMessage(e, $"{e.MessageHtml}", item.UserId))
@@ -156,14 +145,6 @@ namespace Skype.Client.UI.ViewModels
             // https://azscus1-client-s.gateway.messenger.live.com/v1/users/ME/conversations/19:b1d68239ae60460cb1172c76c947733b@thread.skype
             string id = link.Replace("https://azscus1-client-s.gateway.messenger.live.com/v1/users/ME/conversations/", "");
             return id;
-        }
-        private void BlinkFilter(Filter filter)
-        {
-            App.Current.Dispatcher.BeginInvoke(() =>
-            {
-                filter.Flag = true;
-                filter.Flag = false;
-            });
         }
         private void Refresh()
         {

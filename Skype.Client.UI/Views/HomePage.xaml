@@ -6,42 +6,22 @@
       xmlns:local="clr-namespace:Skype.Client.UI.Views"
       xmlns:viewModels="clr-namespace:Skype.Client.UI.ViewModels"
       xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
-      xmlns:converters="clr-namespace:Skype.Client.UI.Converters"
       mc:Ignorable="d"  
       d:DesignHeight="450" d:DesignWidth="800"
       Title="Skype Redirection Bot v1.0">
     <Page.Resources>
         <viewModels:MainViewModel x:Key="viewModel"/>
-        <converters:SyncConverter x:Key="syncConverter"/>
-        <Style TargetType="ListView" x:Key="ListViewWithoutSelection">
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="ItemContainerStyle">
-                <Setter.Value>
-                    <Style TargetType="{x:Type ListViewItem}">
-                        <Setter Property="Background" Value="Transparent" />
-                        <Setter Property="Template">
-                            <Setter.Value>
-                                <ControlTemplate TargetType="{x:Type ListViewItem}">
-                                    <ContentPresenter />
-                                </ControlTemplate>
-                            </Setter.Value>
-                        </Setter>
-                    </Style>
-                </Setter.Value>
-            </Setter>
-        </Style>
-        <Style TargetType="{x:Type DataGridCell}" x:Key="DataGridCellStyle">
-            <Style.Triggers>
-                <Trigger Property="DataGridCell.IsSelected" Value="True">
-                    <Setter Property="BorderBrush" Value="Transparent"/>
-                    <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
-                    <Setter Property="Background" Value="Transparent"/>
-                </Trigger>
-            </Style.Triggers>
-        </Style>
+        <VisualBrush x:Key="StripesBrush" TileMode="Tile"
+               Viewport="0,26,3,105"
+               Viewbox="0,0,10,25" ViewportUnits="Absolute" 
+               ViewboxUnits="Absolute">
+            <VisualBrush.Visual>
+                <Grid>
+                    <Line X1="0" X2="10000" Y1="0" Y2="0" Stroke="LightGray"/>
 
-
+                </Grid>
+            </VisualBrush.Visual>
+        </VisualBrush>
     </Page.Resources>
     <Page.DataContext>
         <Binding Source="{StaticResource viewModel}"/>
@@ -54,20 +34,6 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <Grid.Resources>
-            <VisualBrush x:Key="StripesBrush" TileMode="Tile"
-               Viewport="0,26,3,105"
-               Viewbox="0,0,10,25" ViewportUnits="Absolute" 
-               ViewboxUnits="Absolute">
-                <VisualBrush.Visual>
-                    <Grid>
-                        <Line X1="0" X2="10000" Y1="0" Y2="0" Stroke="LightGray"/>
-
-                    </Grid>
-                </VisualBrush.Visual>
-            </VisualBrush>
-        </Grid.Resources>
-
         <DataGrid ItemsSource="{Binding Filters}"
                   GridLinesVisibility="All"
                   AutoGenerateColumns="False"
@@ -78,11 +44,6 @@
                   IsReadOnly="True" Grid.Row="1"
                   HorizontalAlignment="Left"
                   Background="{StaticResource StripesBrush}">
-            <!--<DataGrid.RowStyle>
-                <Style TargetType="DataGridRow">
-                    <Setter Property="Selector.IsSelected" Value="False"/>
-                </Style>
-            </DataGrid.RowStyle>-->
             <DataGrid.CellStyle>
                 <Style TargetType="DataGridCell">
                     <Setter Property="Background"
@@ -92,30 +53,6 @@
                             <SolidColorBrush Color="White"/>
                         </Setter.Value>
                     </Setter>
-
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding Flag}" Value="True" >
-                            <DataTrigger.EnterActions>
-                                <BeginStoryboard>
-                                    <Storyboard 
-                                x:Name="Blink" 
-                                AutoReverse="True" 
-                                RepeatBehavior="1x">
-                                        <ColorAnimationUsingKeyFrames 
-                                    BeginTime="00:00:00"
-                                    Storyboard.TargetProperty="(Background).(SolidColorBrush.Color)">
-                                            <EasingColorKeyFrame 
-                                        KeyTime="00:00:00.300" 
-                                        Value="{StaticResource MahApps.Colors.AccentBase}" />
-
-                                        </ColorAnimationUsingKeyFrames>
-
-                                    </Storyboard>
-                                </BeginStoryboard>
-
-                            </DataTrigger.EnterActions>
-                        </DataTrigger>
-                    </Style.Triggers>
                 </Style>
             </DataGrid.CellStyle>
             <DataGrid.Resources>

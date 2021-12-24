@@ -127,7 +127,7 @@
             </Button>
             <Button FontSize="{StaticResource BigFontSize}"
                     Margin="{StaticResource ControlMargin}"
-                    Command="{Binding UpdateFilterCommand}"
+                    Command="{Binding AddFilterCommand}"
                     Visibility="{Binding IsNewItem}"
                     Click="SaveButton_Click">
                 Save

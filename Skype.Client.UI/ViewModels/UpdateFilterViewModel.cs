@@ -19,10 +19,8 @@ namespace Skype.Client.UI.ViewModels
         private FilterDbContext _db;
         private SourceProfileVM _selectedSource;
         private DestinationProfileVM _selectedDestination;
-        private string _filterName;
-        private string _filterTrigger;
 
-        private RelayCommand _updateFilterCommand;
+        private RelayCommand _addFilterCommand;
         private RelayCommand _addSourceCommand;
         private RelayCommand _removeSourceCommand;
         private RelayCommand _addDestinationCommand;
@@ -100,21 +98,15 @@ namespace Skype.Client.UI.ViewModels
         #endregion
 
         #region Commands
-        public RelayCommand UpdateFilterCommand
+        public RelayCommand AddFilterCommand
         {
-            get => _updateFilterCommand ??= new RelayCommand(o =>
+            get => _addFilterCommand ??= new RelayCommand(o =>
                 {
                     if (string.IsNullOrEmpty(Filter.Id))
                     {
                         _db.Filters.Add(Filter);
+                        _db.SaveChanges();
                     }
-                    else
-                    {
-                        _db.Filters.Remove(_db.Filters.FirstOrDefault(f => f.Id == Filter.Id));
-                        Filter.Id = null;
-                        _db.Filters.Add(Filter);
-                    }
-                    _db.SaveChanges();
                 });
         }
 
