@@ -118,11 +118,11 @@
             </WrapPanel>
         </StackPanel>
         <WrapPanel Grid.Row="3" Grid.ColumnSpan="2"
-                   HorizontalAlignment="Right">
+                   HorizontalAlignment="Right" ItemWidth="110">
             <Button FontSize="{StaticResource BigFontSize}"
                     Background="{DynamicResource MahApps.Brushes.Control.Validation}"
                     Margin="{StaticResource ControlMargin}"
-                    Click="CloseButton_Click">
+                    Click="CloseButton_Click" HorizontalAlignment="Stretch">
                 Close
             </Button>
             <Button FontSize="{StaticResource BigFontSize}"

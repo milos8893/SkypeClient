@@ -24,10 +24,10 @@
             </ListView.ItemTemplate>
         </ListView>
         <Button Grid.Row="1"
-                HorizontalAlignment="Right"
+                HorizontalAlignment="Left"
                 Command="{Binding AddCommand}"
                 Click="AddButton_Click"
-                Margin="{StaticResource ControlMargin}"
-                FontSize="{StaticResource BigFontSize}">Add</Button>
+                Margin="267,5,0,5"
+                FontSize="{StaticResource BigFontSize}" Width="78">Add</Button>
     </Grid>
 </mah:MetroWindow>
