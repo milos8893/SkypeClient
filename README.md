@@ -19,6 +19,12 @@ In the current state the application provides console output for incoming messag
 
 The shown demo can be found in `Skype.Client.Demo` project
 
+## Installation!
+After you clone the repo, go to Project > Properties > Configurationg Properties > Configuration
+and change all to x64.
+go to Project > Properties > Common Properties > Startup Project > Single Startup project to Skype.Client.Demo
+Then rebuild the solution and thats all
+
 ## Acknowledgements
 This project is based on 
 * Newtonsoft Json.NET (MIT)
