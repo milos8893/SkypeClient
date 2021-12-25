@@ -13,7 +13,7 @@ The library is still under heavy development and should be considered as PoC. Th
 | Audio, Video Call  | 🚧     | Only call notifications are available 
 | Call Updates       | ✔️     | Events for missed, active, ended, declined calls 
 
-## Demo
+## Demo 
 In the current state the application provides console output for incoming messages and calls, as seen below
 ![Communicating with Skype running in console](skype-console-client-demo.gif)
 
