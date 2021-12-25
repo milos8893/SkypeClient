@@ -52,7 +52,7 @@ namespace Skype.Client.UI.ViewModels
         public MainViewModel()
         {
             _logBuilder = new StringBuilder();
-            LogEvent("Starting ...");
+            LogEvent("Skype login in...");
             Refresh();
             Helpers.SkypeClient.MessageReceived += SkypeClient_MessageReceived;
             Helpers.SkypeClient.IncomingCall += SkypeClient_IncomingCall;

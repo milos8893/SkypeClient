@@ -44,10 +44,10 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <TextBlock>UserName *</TextBlock>
+        <TextBlock Text="UserName"/>
         <TextBox Grid.Row="1" Text="{Binding UserName,UpdateSourceTrigger=PropertyChanged}"></TextBox>
 
-        <TextBlock Grid.Row="2">Password *</TextBlock>
+        <TextBlock Grid.Row="2" Text="Password"/>
         <PasswordBox Grid.Row="3"
                      local:PasswordHelper.Attach="True" 
                      local:PasswordHelper.Password="{Binding Password, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" 

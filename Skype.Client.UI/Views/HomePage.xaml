@@ -60,6 +60,9 @@
                     <Setter Property="Foreground" Value="{DynamicResource MahApps.Brushes.Gray5}" />
                 </Style>
             </DataGrid.Resources>
+            <DataGrid.ColumnHeaderStyle>
+                <Style/>
+            </DataGrid.ColumnHeaderStyle>
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Name" Binding="{Binding Name}"
                                     Foreground="Black"
@@ -126,7 +129,7 @@
                 Background="Green"
                 Command="{Binding AddFilterCommand}">
             <WrapPanel>
-                   <TextBlock VerticalAlignment="Center">Add New Filter</TextBlock>
+                <TextBlock VerticalAlignment="Center" Width="119" TextAlignment="Center">Add New Filter</TextBlock>
             </WrapPanel>
         </Button>
 
