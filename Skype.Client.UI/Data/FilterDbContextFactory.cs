@@ -10,7 +10,7 @@ namespace Skype.Client.UI.Data
 {
     internal class FilterDbContextFactory : IDesignTimeDbContextFactory<FilterDbContext>
     {
-        public FilterDbContext CreateDbContext(string[] args)
+        public FilterDbContext CreateDbContext(string[]? args)
         {
             var optionsBuilder = new DbContextOptionsBuilder<FilterDbContext>();
             optionsBuilder.UseSqlite("Data Source = Filters.db");

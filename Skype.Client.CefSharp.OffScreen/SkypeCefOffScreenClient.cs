@@ -16,6 +16,7 @@ namespace Skype.Client.CefSharp.OffScreen
 
             CefSettings setngs = new CefSettings();
             setngs.LogSeverity = LogSeverity.Error;
+            //setngs.CefCommandLineArgs.Remove("enable-media-stream");
             //setngs.CachePath = path;
 
             //Perform dependency check to make sure all relevant resources are in our output directory.
