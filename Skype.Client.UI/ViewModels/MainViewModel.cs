@@ -101,6 +101,7 @@ namespace Skype.Client.UI.ViewModels
                 Message = e.MessageHtml
             });
 
+
             if (Filters.Count == 0)
                 return;
 
@@ -112,6 +113,7 @@ namespace Skype.Client.UI.ViewModels
                    && filter.DestinationChats != null
                    && filter.DestinationChats.Count != 0)
                 {
+
                     var profile = filter.SourceChats.FirstOrDefault(
                     (p) => p.UserId == ConversationLinkToId(e.ConversationLink));
 
@@ -143,7 +145,8 @@ namespace Skype.Client.UI.ViewModels
         {
             //example of link
             // https://azscus1-client-s.gateway.messenger.live.com/v1/users/ME/conversations/19:b1d68239ae60460cb1172c76c947733b@thread.skype
-            string id = link.Replace("https://azscus1-client-s.gateway.messenger.live.com/v1/users/ME/conversations/", "");
+            //string id = link.Replace("https://azscus1-client-s.gateway.messenger.live.com/v1/users/ME/conversations/", "");
+            string id = link.Substring(link.LastIndexOf("/")+1); //("https://azscus1-client-s.gateway.messenger.live.com/v1/users/ME/conversations/", "");
             return id;
         }
         private void Refresh()
