@@ -18,7 +18,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "repo", "repo", "{94E1BB5D-C
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Skype.Client.UI", "Skype.Client.UI\Skype.Client.UI.csproj", "{4A42B4EE-B455-48A4-AA7E-0F8332F15543}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Skype.Client.UI", "Skype.Client.UI\Skype.Client.UI.csproj", "{BB62300A-37C6-427F-827E-49297CB0678C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -68,14 +68,14 @@ Global
 		{8FA7339C-C0C6-4B47-845C-C42D9329B4A4}.Release|Any CPU.Build.0 = Release|Any CPU
 		{8FA7339C-C0C6-4B47-845C-C42D9329B4A4}.Release|x64.ActiveCfg = Release|Any CPU
 		{8FA7339C-C0C6-4B47-845C-C42D9329B4A4}.Release|x64.Build.0 = Release|Any CPU
-		{4A42B4EE-B455-48A4-AA7E-0F8332F15543}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4A42B4EE-B455-48A4-AA7E-0F8332F15543}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4A42B4EE-B455-48A4-AA7E-0F8332F15543}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{4A42B4EE-B455-48A4-AA7E-0F8332F15543}.Debug|x64.Build.0 = Debug|Any CPU
-		{4A42B4EE-B455-48A4-AA7E-0F8332F15543}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4A42B4EE-B455-48A4-AA7E-0F8332F15543}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4A42B4EE-B455-48A4-AA7E-0F8332F15543}.Release|x64.ActiveCfg = Release|Any CPU
-		{4A42B4EE-B455-48A4-AA7E-0F8332F15543}.Release|x64.Build.0 = Release|Any CPU
+		{BB62300A-37C6-427F-827E-49297CB0678C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BB62300A-37C6-427F-827E-49297CB0678C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BB62300A-37C6-427F-827E-49297CB0678C}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{BB62300A-37C6-427F-827E-49297CB0678C}.Debug|x64.Build.0 = Debug|Any CPU
+		{BB62300A-37C6-427F-827E-49297CB0678C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BB62300A-37C6-427F-827E-49297CB0678C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BB62300A-37C6-427F-827E-49297CB0678C}.Release|x64.ActiveCfg = Release|Any CPU
+		{BB62300A-37C6-427F-827E-49297CB0678C}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
