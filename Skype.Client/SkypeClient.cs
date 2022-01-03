@@ -243,7 +243,12 @@ namespace Skype.Client
             string clientMessageId = $"{DateTimeOffset.Now.ToUnixTimeSeconds()}{rint64.ToString()}";
             string conversationLink = recipient.ConversationLink + "/messages";
 
-            string skypeDomain = Contacts[0].TargetLink.Substring(0, Contacts[0].TargetLink.IndexOf(".")) + $".gateway.messenger.live.com/v1/users/ME/conversations/{redirectID}/messages";
+            //string skypeDomain = Contacts[0].TargetLink.Substring(0, Contacts[0].TargetLink.IndexOf(".")) + $".gateway.messenger.live.com/v1/users/ME/conversations/{redirectID}/messages";
+            string skypeDomain = conversationLink.Substring(0, conversationLink.IndexOf(".")) + $".gateway.messenger.live.com/v1/users/ME/conversations/{redirectID}/messages";
+
+            //_logger.LogError("Skype domain:::::::::::{content}", skypeDomain);
+
+
             if (redirectID != "")
                 conversationLink = skypeDomain;
                 //conversationLink = $"https://azscus1-client-s.gateway.messenger.live.com/v1/users/ME/conversations/{redirectID}/messages";
