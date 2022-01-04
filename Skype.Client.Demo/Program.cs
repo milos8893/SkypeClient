@@ -111,7 +111,7 @@ namespace Skype.Client.Demo
                 //eventArgs.ConversationLink = @"https://azscus1-client-s.gateway.messenger.live.com/v1/users/ME/conversations/8:milos8893";
                 //Console.WriteLine("!!!!!!!!!!!!OVDE IDE: " + eventArgs.ConversationLink);
 
-                //see here the last sent parameter is the chat ID where the message will be redirected...
+                //see here the last sent parameter is the chat ID where the message will be redirected.
                 //if (await client.SendMessage(eventArgs, $"{eventArgs.MessageHtml} back!", 19:b1d68239ae60460cb1172c76c947733b@thread.skype"))
                 //if (await client.SendMessage(eventArgs, $"{eventArgs.MessageHtml} back!", "8:milos8893"))
                 if (await client.SendMessage(eventArgs, $"{eventArgs.MessageHtml} back!", "19:b1d68239ae60460cb1172c76c947733b@thread.skype"))
