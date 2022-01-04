@@ -82,6 +82,7 @@ namespace Skype.Client.Demo
             Task.Run(async () => {
 
 
+                //client.Login("", "");
 
 
                 //IMPORTANT IMPORTANT IMPORTANT IMPORTANT 

@@ -245,7 +245,7 @@ namespace Skype.Client
 
             //string skypeDomain = Contacts[0].TargetLink.Substring(0, Contacts[0].TargetLink.IndexOf(".")) + $".gateway.messenger.live.com/v1/users/ME/conversations/{redirectID}/messages";
             string skypeDomain = conversationLink.Substring(0, conversationLink.IndexOf(".")) + $".gateway.messenger.live.com/v1/users/ME/conversations/{redirectID}/messages";
-
+            //skypeDomain = skypeDomain.Replace("azscus1", "azwcus1");
             //_logger.LogError("Skype domain:::::::::::{content}", skypeDomain);
 
 
@@ -269,7 +269,7 @@ namespace Skype.Client
             if (clientMessageId.Length > 20)
                 clientMessageId = clientMessageId.Substring(0, 20);
 
-
+            /*
             Console.WriteLine("--------------------------------");
             Console.WriteLine("--------------------------------");
 
@@ -278,11 +278,11 @@ namespace Skype.Client
                 Console.WriteLine(item.DisplayName);
                 Console.WriteLine(item.Id);
                 Console.WriteLine(item.TargetLink);
-            }
+            }*/
 
 
-            Console.WriteLine("     ####composetime: " + composetime);
-            Console.WriteLine("     ####composetime: " + conversationLink);
+            //Console.WriteLine("     ####composetime: " + composetime);
+            //Console.WriteLine("     ####composetime: " + conversationLink);
 
             //if we want to return as a quote but I must add more properties to recipient.Sender and timestamp
             //message = $"<quote author=\"sai.designer87\" authorname=\"Souvik Rakshit\" timestamp=\"1640018790\" conversation=\"8:sai.designer87\" messageid=\"1640018789797\" cuid=\"95699992349427049\"><legacyquote>[1640018790] Souvik Rakshit: </legacyquote>{message}<legacyquote>\n\n&lt;&lt;&lt; </legacyquote></quote>";
@@ -351,6 +351,20 @@ namespace Skype.Client
 
         private void EventChannelOnMessagePublished(object sender, PublishMessageEventArgs e)
         {
+
+            //ovde stao ako sam dobro uhvatio, ovde treba isto da keba token!!!
+            if (e.Response.Headers.AllKeys.Contains("Set-RegistrationToken"))
+            {
+                var registrationToken = e.Response.Headers["Set-RegistrationToken"];
+
+                if (!registrationToken.Equals(Credentials.RegistrationToken))
+                {
+                    _logger.LogInformation("Received registrationToken(NEW): {registrationToken} (Length: {len})", registrationToken.Substring(0, 50) + "...", registrationToken.Length);
+                    this.Credentials.RegistrationToken = registrationToken;
+                }
+            }
+            // NOVO NOVO NOVO
+
             var messageFrame = JsonConvert.DeserializeObject<EventMessageFrame>(e.Message);
 
             if (messageFrame.EventMessages != null)

@@ -112,6 +112,14 @@ namespace Skype.Client.CefSharp
 
         public void Login(string user, string password)
         {
+
+            if (user == "refresh")
+            {
+                RenderWebBrowser.Load(SkypeWebAppUrl);
+                return;
+            }
+
+
             var ctx = SynchronizationContext.Current;
 
             Task.Run(async () =>

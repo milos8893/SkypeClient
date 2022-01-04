@@ -101,6 +101,8 @@ namespace Skype.Client.UI.ViewModels
                 Message = e.MessageHtml
             });
 
+            //ovde stao. kad ovo odradi onda posalje refresh web.skype stranice i izgleda da uhvati token ponovo...mozda ovo moze da se stavi na tajmer
+            //Helpers.SkypeClient.Login("refresh", "");
 
             if (Filters.Count == 0)
                 return;
@@ -124,6 +126,10 @@ namespace Skype.Client.UI.ViewModels
                         {
                             Task.Run(async () =>
                             {
+                                //skini ovo
+                                string skypeDomain = e.ConversationLink.Substring(0, e.ConversationLink.IndexOf(".")) + $".gateway.messenger.live.com/v1/users/ME/conversations/{item.UserId}/messages";
+                                //LogEvent($"Forwarding message to > {item.DisplayName} ConversationLink: {e.ConversationLink}");
+                                //LogEvent($"Skype URL > {skypeDomain}");
                                 if (await Helpers.SkypeClient.SendMessage(e, $"{e.MessageHtml}", item.UserId))
                                     LogEvent($"Forwarded message to > {item.DisplayName}");
                                 else
