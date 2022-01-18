@@ -120,14 +120,14 @@ namespace Skype.Client.UI.ViewModels
                     (p) => p.UserId == ConversationLinkToId(e.ConversationLink));
 
                     if (profile != null
-                        && e.MessageHtml.Contains(filter.Trigger))
+                        && (e.MessageHtml.Contains(filter.Trigger + " ") || e.MessageHtml.Contains(filter.Trigger + "-")))
                     {
                         foreach (var item in filter.DestinationChats)
                         {
                             Task.Run(async () =>
                             {
                                 //skini ovo
-                                string skypeDomain = e.ConversationLink.Substring(0, e.ConversationLink.IndexOf(".")) + $".gateway.messenger.live.com/v1/users/ME/conversations/{item.UserId}/messages";
+                                //string skypeDomain = e.ConversationLink.Substring(0, e.ConversationLink.IndexOf(".")) + $".gateway.messenger.live.com/v1/users/ME/conversations/{item.UserId}/messages";
                                 //LogEvent($"Forwarding message to > {item.DisplayName} ConversationLink: {e.ConversationLink}");
                                 //LogEvent($"Skype URL > {skypeDomain}");
                                 if (await Helpers.SkypeClient.SendMessage(e, $"{e.MessageHtml}", item.UserId))

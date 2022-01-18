@@ -351,19 +351,23 @@ namespace Skype.Client
 
         private void EventChannelOnMessagePublished(object sender, PublishMessageEventArgs e)
         {
-
-            //ovde stao ako sam dobro uhvatio, ovde treba isto da keba token!!!
-            if (e.Response.Headers.AllKeys.Contains("Set-RegistrationToken"))
+            try
             {
-                var registrationToken = e.Response.Headers["Set-RegistrationToken"];
-
-                if (!registrationToken.Equals(Credentials.RegistrationToken))
+                //ovde stao ako sam dobro uhvatio, ovde treba isto da keba token!!!
+                if (e.Response.Headers.AllKeys.Contains("Set-RegistrationToken"))
                 {
-                    _logger.LogInformation("Received registrationToken(NEW): {registrationToken} (Length: {len})", registrationToken.Substring(0, 50) + "...", registrationToken.Length);
-                    this.Credentials.RegistrationToken = registrationToken;
+                    var registrationToken = e.Response.Headers["Set-RegistrationToken"];
+
+                    if (!registrationToken.Equals(Credentials.RegistrationToken))
+                    {
+                        _logger.LogInformation("Received registrationToken(NEW): {registrationToken} (Length: {len})", registrationToken.Substring(0, 50) + "...", registrationToken.Length);
+                        this.Credentials.RegistrationToken = registrationToken;
+                    }
                 }
+                // NOVO NOVO NOVO
             }
-            // NOVO NOVO NOVO
+            catch {}
+
 
             var messageFrame = JsonConvert.DeserializeObject<EventMessageFrame>(e.Message);
 
