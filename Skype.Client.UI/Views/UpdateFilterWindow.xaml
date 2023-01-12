@@ -1,0 +1,137 @@
+﻿<mah:MetroWindow  x:Class="Skype.Client.UI.Views.UpdateFilterWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Skype.Client.UI.Views"
+        xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+        xmlns:ViewModels="clr-namespace:Skype.Client.UI.ViewModels" xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+        mc:Ignorable="d" WindowStartupLocation="CenterScreen"
+        Title="Add Filter" Height="450" Width="500">
+    <Grid Margin="{StaticResource ControlMargin}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <StackPanel Margin="{StaticResource ControlMargin}">
+            <TextBlock FontSize="{StaticResource BigFontSize}"
+                       Margin="{StaticResource ControlMargin}"
+                       Foreground="{DynamicResource MahApps.Brushes.Gray2}">
+                    Name
+            </TextBlock>
+
+            <TextBox Text="{Binding FilterName}"
+                         FontSize="{StaticResource BigFontSize}"
+                         Margin="{StaticResource ControlMargin}"/>
+        </StackPanel>
+
+        <StackPanel Grid.Column="1"
+                    Margin="{StaticResource ControlMargin}">
+            <TextBlock FontSize="{StaticResource BigFontSize}"
+                       Margin="{StaticResource ControlMargin}"
+                       Foreground="{DynamicResource MahApps.Brushes.Gray2}">
+                    Trigger
+            </TextBlock>
+            <TextBox Text="{Binding FilterTrigger}"
+                         FontSize="{StaticResource BigFontSize}"
+                         Margin="{StaticResource ControlMargin}"
+                         AcceptsReturn="True" AcceptsTab="True"/>
+        </StackPanel>
+
+        <StackPanel Grid.Row="1" 
+                    Margin="{StaticResource ControlMargin}">
+            <TextBlock FontSize="{StaticResource BigFontSize}"
+                       Foreground="{DynamicResource MahApps.Brushes.Gray2}">
+                Source Chats
+            </TextBlock>
+            <ListView ItemsSource="{Binding Filter.SourceChats}"
+                      SelectedItem="{Binding SelectedSource}"
+                      Margin="{StaticResource ControlMargin}"
+                      Height="150" BorderThickness="1">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel>
+                            <TextBlock Text="{Binding DisplayName}"
+                               FontSize="{StaticResource BigFontSize}"/>
+                        </StackPanel>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+
+            <WrapPanel HorizontalAlignment="Right"
+                       VerticalAlignment="Bottom">
+                <Button Margin="{StaticResource ControlMargin}"
+                        FontSize="{StaticResource BigFontSize}"
+                        Command="{Binding RemoveSourceCommand}"
+                        Background="{DynamicResource MahApps.Brushes.Control.Validation}"
+                        Foreground="White">
+                    <iconPacks:PackIconModern  Kind="Delete" VerticalAlignment="Center" Margin="{StaticResource ControlMargin}" />
+                </Button>
+                <Button Margin="{StaticResource ControlMargin}"
+                        FontSize="{StaticResource BigFontSize}"
+                        Command="{Binding AddSourceCommand}"
+                        Background="Green">
+                    <iconPacks:PackIconModern  Kind="Add" VerticalAlignment="Center" Margin="{StaticResource ControlMargin}" />
+                </Button>
+            </WrapPanel>
+        </StackPanel>
+
+        <StackPanel Grid.Row="1" Grid.Column="1"
+                    Margin="{StaticResource ControlMargin}">
+            <TextBlock FontSize="{StaticResource BigFontSize}"
+                       Foreground="{DynamicResource MahApps.Brushes.Gray2}">
+                Destination Chats
+            </TextBlock>
+            <ListView ItemsSource="{Binding Filter.DestinationChats}"
+                      SelectedItem="{Binding SelectedDestination}"
+                      Margin="{StaticResource ControlMargin}"
+                      Height="150" BorderThickness="1">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding DisplayName}"
+                               FontSize="{StaticResource BigFontSize}"/>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+
+            <WrapPanel HorizontalAlignment="Right"
+                                   VerticalAlignment="Bottom">
+                <Button Margin="{StaticResource ControlMargin}"
+                        FontSize="{StaticResource BigFontSize}"
+                        Command="{Binding RemoveDestionationCommand}"
+                        Background="{DynamicResource MahApps.Brushes.Control.Validation}"
+                        Foreground="White">
+                    <iconPacks:PackIconModern  Kind="Delete" VerticalAlignment="Center" Margin="{StaticResource ControlMargin}" />
+                </Button>
+                <Button Margin="{StaticResource ControlMargin}"
+                        FontSize="{StaticResource BigFontSize}"
+                        Command="{Binding AddDestinationCommand}"
+                        Background="Green">
+                    <iconPacks:PackIconModern  Kind="Add" VerticalAlignment="Center" Margin="{StaticResource ControlMargin}" />
+                </Button>
+            </WrapPanel>
+        </StackPanel>
+        <WrapPanel Grid.Row="3" Grid.ColumnSpan="2"
+                   HorizontalAlignment="Right" ItemWidth="110">
+            <Button FontSize="{StaticResource BigFontSize}"
+                    Background="{DynamicResource MahApps.Brushes.Control.Validation}"
+                    Margin="{StaticResource ControlMargin}"
+                    Click="CloseButton_Click" HorizontalAlignment="Stretch">
+                Close
+            </Button>
+            <Button FontSize="{StaticResource BigFontSize}"
+                    Margin="{StaticResource ControlMargin}"
+                    Command="{Binding AddFilterCommand}"
+                    Visibility="{Binding IsNewItem}"
+                    Click="SaveButton_Click">
+                Save
+            </Button>
+        </WrapPanel>
+    </Grid>
+</mah:MetroWindow>

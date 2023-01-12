@@ -40,13 +40,13 @@ namespace Skype.Client
         protected MessageChannel UserPresenceChannel { get; }
 
         protected MessageChannel ConversationHistoryChannel { get; }
-        
+
         protected MessageChannel ConversationChatHistoryChannel { get; }
 
         public event EventHandler<CallEventArgs> IncomingCall;
         public event EventHandler<CallEventArgs> CallStatusChanged;
 
-        public event EventHandler<MessageReceivedEventArgs> MessageReceived; 
+        public event EventHandler<MessageReceivedEventArgs> MessageReceived;
         public event EventHandler<EventMessageEventArgs> UnhandledEventMessage;
 
         public event EventHandler<StatusChangedEventArgs> StatusChanged;
@@ -114,7 +114,7 @@ namespace Skype.Client
                             //_logger.LogInformation("Found new contact: '{displayName}' ({id})", profile.DisplayName, profile.Id);
                             _logger.LogInformation("Found new contact: '{displayName}' ({id}) ({targetLink})", contact.threadProperties.topic, profile.Id, profile.TargetLink);
                         }
-                        
+
 
                     }
                 }
@@ -152,45 +152,60 @@ namespace Skype.Client
 
         private void ProfilesChannelOnMessagePublished(object sender, PublishMessageEventArgs e)
         {
-            var profileFrame = JsonConvert.DeserializeObject<ProfileFrame>(e.Message);
 
-            if (profileFrame == null)
+            // ovde stao precio crash bug
+            try
             {
-                return;
-            }
 
-            foreach (var item in profileFrame.Profiles)
-            {
-                //var profile = new Profile(item.Key, item.Value.Profile.DisplayName, item.Value.Profile.TargetLink);
-                var profile = new Profile(item.Key, item.Value.Profile.DisplayName, $@"https://azscus1-client-s.gateway.messenger.live.com/v1/users/ME/conversations/{item.Key}");
-                    
-                if (item.Value.Authorized)
+                var profileFrame = JsonConvert.DeserializeObject<ProfileFrame>(e.Message);
+
+                if (profileFrame == null)
                 {
-                    this.Me = profile;
-
-                    if (this.Status != AppStatus.Ready)
-                    {
-                        _logger.LogInformation("Logged in as '{}', Id: {id}. Client is ready for interactions.", profile.DisplayName, profile.Id);
-                        this.UpdateStatus(AppStatus.Ready);
-                    }
-
+                    return;
                 }
-                else
+
+                foreach (var item in profileFrame.Profiles)
                 {
-                    var existing = Contacts.SingleOrDefault(c => c.Id == profile.Id);
-                    if (existing != null)
+                    //var profile = new Profile(item.Key, item.Value.Profile.DisplayName, item.Value.Profile.TargetLink);
+                    var profile = new Profile(item.Key, item.Value.Profile.DisplayName, $@"https://azscus1-client-s.gateway.messenger.live.com/v1/users/ME/conversations/{item.Key}");
+
+                    if (item.Value.Authorized)
                     {
-                        _logger.LogInformation("Updating existing contact '{displayName}' ({id})", existing.DisplayName, existing.Id);
-                        existing.DisplayName = profile.DisplayName;
+                        this.Me = profile;
+
+                        if (this.Status != AppStatus.Ready)
+                        {
+                            _logger.LogInformation("Logged in as '{}', Id: {id}. Client is ready for interactions.", profile.DisplayName, profile.Id);
+                            this.UpdateStatus(AppStatus.Ready);
+                        }
+
                     }
                     else
                     {
-                        _logger.LogInformation("Found new contact: '{displayName}' ({id}) ({targetLink})", profile.DisplayName, profile.Id, profile.TargetLink);
-                        this.Contacts.Add(profile);
+                        var existing = Contacts.SingleOrDefault(c => c.Id == profile.Id);
+                        if (existing != null)
+                        {
+                            _logger.LogInformation("Updating existing contact '{displayName}' ({id})", existing.DisplayName, existing.Id);
+                            existing.DisplayName = profile.DisplayName;
+                        }
+                        else
+                        {
+                            _logger.LogInformation("Found new contact: '{displayName}' ({id}) ({targetLink})", profile.DisplayName, profile.Id, profile.TargetLink);
+                            this.Contacts.Add(profile);
 
+                        }
                     }
                 }
             }
+            catch{}
+
+
+
+
+
+
+
+
         }
 
         private void PropertiesChannelOnMessagePublished(object sender, PublishMessageEventArgs e)
@@ -222,15 +237,15 @@ namespace Skype.Client
         public CredentialsStore Credentials { get; set; } = new CredentialsStore();
 
         public Properties Properties { get; private set; }
-        
+
         public Profile Me { get; set; }
-        
+
         public List<Profile> Contacts { get; } = new List<Profile>();
 
         //public async Task<bool> SendMessage(Profile recipient, string message)
         public async Task<bool> SendMessage(MessageReceivedEventArgs recipient, string message, string redirectID = "")
         {
-            
+
             HttpClient client = new HttpClient();
 
             var r = new Random(DateTime.Now.Millisecond);
@@ -243,7 +258,12 @@ namespace Skype.Client
             string clientMessageId = $"{DateTimeOffset.Now.ToUnixTimeSeconds()}{rint64.ToString()}";
             string conversationLink = recipient.ConversationLink + "/messages";
 
-            string skypeDomain = Contacts[0].TargetLink.Substring(0, Contacts[0].TargetLink.IndexOf(".")) + $".gateway.messenger.live.com/v1/users/ME/conversations/{redirectID}/messages";
+            //string skypeDomain = Contacts[0].TargetLink.Substring(0, Contacts[0].TargetLink.IndexOf(".")) + $".gateway.messenger.live.com/v1/users/ME/conversations/{redirectID}/messages";
+            string skypeDomain = conversationLink.Substring(0, conversationLink.IndexOf(".")) + $".gateway.messenger.live.com/v1/users/ME/conversations/{redirectID}/messages";
+            //skypeDomain = skypeDomain.Replace("azscus1", "azwcus1");
+            //_logger.LogError("Skype domain:::::::::::{content}", skypeDomain);
+
+
             if (redirectID != "")
                 conversationLink = skypeDomain;
                 //conversationLink = $"https://azscus1-client-s.gateway.messenger.live.com/v1/users/ME/conversations/{redirectID}/messages";
@@ -264,7 +284,7 @@ namespace Skype.Client
             if (clientMessageId.Length > 20)
                 clientMessageId = clientMessageId.Substring(0, 20);
 
-
+            /*
             Console.WriteLine("--------------------------------");
             Console.WriteLine("--------------------------------");
 
@@ -273,11 +293,11 @@ namespace Skype.Client
                 Console.WriteLine(item.DisplayName);
                 Console.WriteLine(item.Id);
                 Console.WriteLine(item.TargetLink);
-            }
+            }*/
 
 
-            Console.WriteLine("     ####composetime: " + composetime);
-            Console.WriteLine("     ####composetime: " + conversationLink);
+            //Console.WriteLine("     ####composetime: " + composetime);
+            //Console.WriteLine("     ####composetime: " + conversationLink);
 
             //if we want to return as a quote but I must add more properties to recipient.Sender and timestamp
             //message = $"<quote author=\"sai.designer87\" authorname=\"Souvik Rakshit\" timestamp=\"1640018790\" conversation=\"8:sai.designer87\" messageid=\"1640018789797\" cuid=\"95699992349427049\"><legacyquote>[1640018790] Souvik Rakshit: </legacyquote>{message}<legacyquote>\n\n&lt;&lt;&lt; </legacyquote></quote>";
@@ -289,19 +309,18 @@ namespace Skype.Client
                     startComposeTime = composetime,
                     content  = message,
                     messagetype = messageType,
-
                     contenttype = contentType
             }
             );
-            //                  startComposeTime = composetime,
-            //{"clientmessageid":"10143808490198678502","composetime":"2021-12-22T16:43:35.919Z","content":"testbre","messagetype":"RichText","contenttype":"text","imdisplayname":"m m"}
-            //                    imdisplayname = "a a",
 
+            
 
             var httpRequestMessage = new HttpRequestMessage();
             httpRequestMessage.Method = HttpMethod.Post;
-            
+            //var userId = recipient.Sender.Id;
 
+
+            //httpRequestMessage.RequestUri = new Uri($"https://client-s.gateway.messenger.live.com/v1/users/ME/conversations/{userId}/messages");
             httpRequestMessage.RequestUri = new Uri($"{conversationLink}");
             httpRequestMessage.Headers.Add("RegistrationToken", this.Credentials.RegistrationToken);
             httpRequestMessage.Content = new StringContent(content, Encoding.UTF8, "application/json");
@@ -313,7 +332,7 @@ namespace Skype.Client
                 return true;
             }
 
-            
+
 
 
             var responseString = await response.Content.ReadAsStringAsync();
@@ -324,7 +343,7 @@ namespace Skype.Client
 
         private void UserPresenceChannelOnMessagePublished(object sender, PublishMessageEventArgs e)
         {
-            
+
         }
 
         private void CallSignalingChannelOnMessagePublished(object sender, PublishMessageEventArgs e)
@@ -347,16 +366,34 @@ namespace Skype.Client
 
         private void EventChannelOnMessagePublished(object sender, PublishMessageEventArgs e)
         {
+            try
+            {
+                //ovde stao ako sam dobro uhvatio, ovde treba isto da keba token!!!
+                if (e.Response.Headers.AllKeys.Contains("Set-RegistrationToken"))
+                {
+                    var registrationToken = e.Response.Headers["Set-RegistrationToken"];
+
+                    if (!registrationToken.Equals(Credentials.RegistrationToken))
+                    {
+                        _logger.LogInformation("Received registrationToken(NEW): {registrationToken} (Length: {len})", registrationToken.Substring(0, 50) + "...", registrationToken.Length);
+                        this.Credentials.RegistrationToken = registrationToken;
+                    }
+                }
+                // NOVO NOVO NOVO
+            }
+            catch {}
+
+
             var messageFrame = JsonConvert.DeserializeObject<EventMessageFrame>(e.Message);
-            
+
             if (messageFrame.EventMessages != null)
             {
                 foreach (var eventMessage in messageFrame.EventMessages)
                 {
                     if (HandleUserPresence(eventMessage)) continue;
-                    
+
                     if (HandleEndpointPresence(eventMessage)) continue;
-                    
+
                     if (HandleCallLogMessages(eventMessage)) continue;
 
                     if (HandleCallPreFlightEvent(eventMessage)) continue;
@@ -369,7 +406,7 @@ namespace Skype.Client
 
                     if (HandleCustomUserProperties(eventMessage)) continue;
 
-                    OnUnhandledEventMessage(new EventMessageEventArgs {EventMessage = eventMessage});
+                    OnUnhandledEventMessage(new EventMessageEventArgs { EventMessage = eventMessage });
                     _logger.LogWarning("Unable to handle eventMessage '{id}' of type '{type}' with resource type '{resourceType}'", eventMessage.Id, eventMessage.Type, eventMessage.ResourceType);
                 }
             }
@@ -394,7 +431,7 @@ namespace Skype.Client
 
             return false;
         }
-        
+
         private bool HandleTypingMessage(EventMessage eventMessage)
         {
             if (!(eventMessage.Resource is NewMessageResource res)) return false;
@@ -428,11 +465,11 @@ namespace Skype.Client
             {
                 return;
             }
-            
+
             var oldStatus = appStatus;
             this.Status = appStatus;
 
-            OnStatusChanged(new StatusChangedEventArgs {Old = oldStatus, New = appStatus } );
+            OnStatusChanged(new StatusChangedEventArgs { Old = oldStatus, New = appStatus });
         }
 
         private bool HandleCallUpdates(EventMessage eventMessage)
@@ -454,7 +491,7 @@ namespace Skype.Client
             var serializer = new XmlSerializer(typeof(ParticipantList));
             var byteArray = Encoding.UTF8.GetBytes(callInformationXmlString);
             var callStartedXmlStream = new MemoryStream(byteArray);
-            var partsList = (ParticipantList) serializer.Deserialize(callStartedXmlStream);
+            var partsList = (ParticipantList)serializer.Deserialize(callStartedXmlStream);
             if (partsList == null || (partsList.Type != "started" && partsList.Type != "ended"))
             {
                 return false;

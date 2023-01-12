@@ -1,0 +1,33 @@
+﻿<mah:MetroWindow  x:Class="Skype.Client.UI.Views.AddSourceChatWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Skype.Client.UI.Views"
+        mc:Ignorable="d" WindowStartupLocation="CenterScreen"
+        Title="Add" Height="300" Width="350">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <ListView ItemsSource="{Binding Contacts}"
+                  SelectedItem="{Binding SelectedContact}">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <WrapPanel>
+                        <TextBlock Text="{Binding DisplayName}"
+                                   FontSize="{StaticResource BigFontSize}"/>
+                    </WrapPanel>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+        <Button Grid.Row="1"
+                HorizontalAlignment="Left"
+                Command="{Binding AddCommand}"
+                Click="AddButton_Click"
+                Margin="267,5,0,5"
+                FontSize="{StaticResource BigFontSize}" Width="78">Add</Button>
+    </Grid>
+</mah:MetroWindow>
