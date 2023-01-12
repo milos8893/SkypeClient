@@ -152,45 +152,60 @@ namespace Skype.Client
 
         private void ProfilesChannelOnMessagePublished(object sender, PublishMessageEventArgs e)
         {
-            var profileFrame = JsonConvert.DeserializeObject<ProfileFrame>(e.Message);
 
-            if (profileFrame == null)
+            // ovde stao precio crash bug
+            try
             {
-                return;
-            }
 
-            foreach (var item in profileFrame.Profiles)
-            {
-                //var profile = new Profile(item.Key, item.Value.Profile.DisplayName, item.Value.Profile.TargetLink);
-                var profile = new Profile(item.Key, item.Value.Profile.DisplayName, $@"https://azscus1-client-s.gateway.messenger.live.com/v1/users/ME/conversations/{item.Key}");
+                var profileFrame = JsonConvert.DeserializeObject<ProfileFrame>(e.Message);
 
-                if (item.Value.Authorized)
+                if (profileFrame == null)
                 {
-                    this.Me = profile;
-
-                    if (this.Status != AppStatus.Ready)
-                    {
-                        _logger.LogInformation("Logged in as '{}', Id: {id}. Client is ready for interactions.", profile.DisplayName, profile.Id);
-                        this.UpdateStatus(AppStatus.Ready);
-                    }
-
+                    return;
                 }
-                else
+
+                foreach (var item in profileFrame.Profiles)
                 {
-                    var existing = Contacts.SingleOrDefault(c => c.Id == profile.Id);
-                    if (existing != null)
+                    //var profile = new Profile(item.Key, item.Value.Profile.DisplayName, item.Value.Profile.TargetLink);
+                    var profile = new Profile(item.Key, item.Value.Profile.DisplayName, $@"https://azscus1-client-s.gateway.messenger.live.com/v1/users/ME/conversations/{item.Key}");
+
+                    if (item.Value.Authorized)
                     {
-                        _logger.LogInformation("Updating existing contact '{displayName}' ({id})", existing.DisplayName, existing.Id);
-                        existing.DisplayName = profile.DisplayName;
+                        this.Me = profile;
+
+                        if (this.Status != AppStatus.Ready)
+                        {
+                            _logger.LogInformation("Logged in as '{}', Id: {id}. Client is ready for interactions.", profile.DisplayName, profile.Id);
+                            this.UpdateStatus(AppStatus.Ready);
+                        }
+
                     }
                     else
                     {
-                        _logger.LogInformation("Found new contact: '{displayName}' ({id}) ({targetLink})", profile.DisplayName, profile.Id, profile.TargetLink);
-                        this.Contacts.Add(profile);
+                        var existing = Contacts.SingleOrDefault(c => c.Id == profile.Id);
+                        if (existing != null)
+                        {
+                            _logger.LogInformation("Updating existing contact '{displayName}' ({id})", existing.DisplayName, existing.Id);
+                            existing.DisplayName = profile.DisplayName;
+                        }
+                        else
+                        {
+                            _logger.LogInformation("Found new contact: '{displayName}' ({id}) ({targetLink})", profile.DisplayName, profile.Id, profile.TargetLink);
+                            this.Contacts.Add(profile);
 
+                        }
                     }
                 }
             }
+            catch{}
+
+
+
+
+
+
+
+
         }
 
         private void PropertiesChannelOnMessagePublished(object sender, PublishMessageEventArgs e)

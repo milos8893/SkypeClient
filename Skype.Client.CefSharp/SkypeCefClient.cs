@@ -191,6 +191,18 @@ namespace Skype.Client.CefSharp
 
             await Task.Delay(2000);
 
+
+                /*
+                try
+                {
+                    await _pageInteraction.ClickButtonById("idSIButton9");
+                    await Task.Delay(2000);
+                }
+                catch{}
+                */
+
+            
+
             _logger.LogDebug("Complete login flow by clicking Remember button");
             await _pageInteraction.ClickButtonById("idSIButton9");
 
