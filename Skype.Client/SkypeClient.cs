@@ -136,7 +136,15 @@ namespace Skype.Client
                 {
                     if (!this.Contacts.Exists(p => p.Id == contact.Mri))
                     {
-                        var contactDisplayName = !string.IsNullOrWhiteSpace(contact.DisplayName) ? contact.DisplayName : contact.Profile.Name.First;
+                        string contactFirstName;
+                        try
+                        {
+                            contactFirstName = contact.Profile.Name.First;
+                        }
+                        catch {
+                            contactFirstName = "";
+                        }
+                        var contactDisplayName = !string.IsNullOrWhiteSpace(contact.DisplayName) ? contact.DisplayName : contactFirstName;
                         var profile = new Profile(contact.Mri, contactDisplayName, contact.TargetLink);
 
                         this.Contacts.Add(profile);
@@ -166,8 +174,16 @@ namespace Skype.Client
 
                 foreach (var item in profileFrame.Profiles)
                 {
+                    string displayName;
+                    try
+                    {
+                        displayName = item.Value.Profile.DisplayName;
+                    }
+                    catch{
+                        displayName = "NONE";
+                    }
                     //var profile = new Profile(item.Key, item.Value.Profile.DisplayName, item.Value.Profile.TargetLink);
-                    var profile = new Profile(item.Key, item.Value.Profile.DisplayName, $@"https://azscus1-client-s.gateway.messenger.live.com/v1/users/ME/conversations/{item.Key}");
+                    var profile = new Profile(item.Key, displayName, $@"https://azscus1-client-s.gateway.messenger.live.com/v1/users/ME/conversations/{item.Key}");
 
                     if (item.Value.Authorized)
                     {
@@ -273,7 +289,7 @@ namespace Skype.Client
                                     //jbt problem bude promenjen azscus1 azwcus1
                                     //ako opet bude jebavalo, uzeti iz profile linka
 
-            string userId = recipient.Sender.Id;
+            //string userId = recipient.Sender.Id;
             string messageType = recipient.MessageType;
             //messagetype = "RichText",
             string contentType = recipient.ContentType;
